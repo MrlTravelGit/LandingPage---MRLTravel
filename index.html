@@ -1,0 +1,1137 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MRL Travel | Grupo VIP</title>
+  <meta name="description" content="Receba alertas diários de passagens e pacotes com ofertas e suporte da MRL Travel." />
+  <meta name="theme-color" content="#0b1f3b" />
+
+  <!-- Cole aqui seus scripts de tracking (Meta Pixel, GA4, Google Ads etc) -->
+
+  <style>
+    :root{
+      /* Cores da MRL Travel */
+      --blue-900:#060a13;
+      --blue-800:#0b1f3b;
+      --blue-700:#123a74;
+
+      --gold-600:#d7b46a;
+      --gold-700:#b9852a;
+
+      --text:#ecf2ff;
+      --muted:#b9c6ea;
+      --border:rgba(255,255,255,.12);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+
+      /* Imagem principal */
+      --hero: url("./img/asa-aviao.png");
+
+      /* espaçamento lateral */
+      --pad: 56px;
+
+      /* largura de leitura */
+      --contentMax: 1100px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      color:var(--text);
+      background: var(--blue-900);
+      line-height:1.45;
+      overflow-x:hidden;
+    }
+    a{color:inherit; text-decoration:none}
+
+    .wrap{ width:100%; padding: 0 var(--pad); margin:0; }
+    .contentMax{ max-width: var(--contentMax); margin: 0 auto; }
+
+    @media (max-width: 900px){ :root{ --pad: 28px; } }
+    @media (max-width: 520px){ :root{ --pad: 18px; } }
+
+    /* Fundo global */
+    .bg{
+      position:fixed; inset:0; z-index:-3;
+      background-image: var(--hero);
+      background-size: cover;
+      background-position:center;
+      transform: scale(1.02);
+      filter: saturate(1.05) contrast(1.05);
+    }
+    .overlay{
+      position:fixed; inset:0; z-index:-2;
+      background:
+        radial-gradient(1100px 700px at 20% 15%, rgba(18,58,116,.45), transparent 60%),
+        radial-gradient(900px 600px at 85% 20%, rgba(215,180,106,.22), transparent 65%),
+        linear-gradient(180deg, rgba(6,10,19,.78), rgba(6,10,19,.92));
+    }
+
+    /* Topbar */
+    .topbar{
+      position:sticky; top:0; z-index:50;
+      backdrop-filter: blur(10px);
+      background: rgba(6,10,19,.55);
+      border-bottom: 1px solid rgba(255,255,255,.10);
+    }
+    .topbar .wrap{
+      display:flex;
+      align-items:center;
+      justify-content:space-between;
+      gap:12px;
+      padding-top: 12px;
+      padding-bottom: 12px;
+    }
+
+    .brand{
+      display:flex;
+      align-items:center;
+      gap:10px;
+      min-width: 0;
+    }
+    .logo{
+      height: 34px;
+      width: auto;
+      display:block;
+      border-radius: 10px;
+      box-shadow: 0 10px 28px rgba(0,0,0,.18);
+    }
+    .brandName{
+      font-weight:1000;
+      letter-spacing:.2px;
+      white-space:nowrap;
+      overflow:hidden;
+      text-overflow:ellipsis;
+    }
+
+    /* Botões */
+    .btn{
+      display:inline-flex; align-items:center; justify-content:center;
+      padding:10px 14px;
+      border-radius:12px;
+      border:1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-weight:1000;
+      cursor:pointer;
+      box-shadow: 0 10px 28px rgba(0,0,0,.25);
+      transition: transform .12s ease, filter .12s ease;
+    }
+    .btn:active{transform: translateY(1px)}
+    .btnGold{
+      border:1px solid rgba(215,180,106,.35);
+      background: linear-gradient(180deg, rgba(215,180,106,.96), rgba(185,133,42,.96));
+      color:#0a0f1e;
+    }
+
+    .sectionDark{width:100%}
+    .sectionLight{
+      width:100%;
+      padding: 64px 0;
+      background: rgba(240,240,240,.98);
+      color:#0a0f1e;
+    }
+
+    .sectionTitle{
+      margin: 0 0 10px;
+      font-size: 34px;
+      font-weight:1100;
+      letter-spacing:-.2px;
+    }
+    .p{
+      margin:12px 0 0;
+      color: var(--muted);
+      font-weight:800;
+      max-width: 72ch;
+    }
+    .sectionLight .p{ color: rgba(10,15,30,.78); }
+
+    /* HERO */
+    .heroFull{
+      position:relative;
+      width:100%;
+      min-height: 520px;
+      padding: 74px 0 64px;
+      overflow:hidden;
+    }
+    .heroFull::before{
+      content:"";
+      position:absolute; inset:0;
+      background-image: var(--hero);
+      background-size: cover;
+      background-position: center;
+      transform: scale(1.03);
+      filter: saturate(1.05) contrast(1.05);
+      opacity:.95;
+    }
+    .heroFull::after{
+      content:"";
+      position:absolute; inset:0;
+      background:
+        radial-gradient(1100px 700px at 18% 30%, rgba(18,58,116,.56), transparent 60%),
+        radial-gradient(900px 600px at 86% 18%, rgba(215,180,106,.16), transparent 65%),
+        linear-gradient(180deg, rgba(6,10,19,.55), rgba(6,10,19,.92));
+    }
+    .heroInner{ position:relative; z-index:2; }
+
+    .heroBlock{
+      max-width: 980px;
+      margin: 0 auto;
+      text-align:left;
+    }
+    .kicker{
+      font-weight:1100;
+      font-size: 16px;
+      color: rgba(236,242,255,.92);
+      letter-spacing:.2px;
+    }
+    .heroTitle{
+      margin:12px 0 12px;
+      font-size:56px;
+      line-height:1.05;
+      letter-spacing:-.3px;
+      max-width: 28ch;
+    }
+    .hl{color: var(--gold-600); font-weight:1100}
+    .sub{
+      margin:0;
+      color: var(--muted);
+      font-weight:900;
+      max-width: 78ch;
+      font-size:16px;
+    }
+    .subSmall{
+      margin:14px 0 0;
+      color: rgba(236,242,255,.84);
+      font-weight:800;
+      max-width: 78ch;
+      font-size:13px;
+      line-height:1.55;
+    }
+    .ctaRow{
+      margin-top:18px;
+      display:flex; gap:10px; flex-wrap:wrap;
+      justify-content:flex-start;
+    }
+
+    /* ABOUT */
+    .aboutGrid{
+      display:grid;
+      grid-template-columns: 1.15fr .85fr;
+      gap: 28px;
+      align-items:center;
+    }
+    .aboutPhoto{
+      border-radius: 16px;
+      border: 2px solid rgba(215,180,106,.55);
+      overflow:hidden;
+      background: rgba(10,16,32,.06);
+      box-shadow: 0 18px 60px rgba(0,0,0,.18);
+      max-width: 520px;
+      justify-self:end;
+    }
+    .aboutPhoto img{ width:100%; height:auto; display:block; }
+
+    /* DEPOIMENTOS (estilo referência: cards claros e setas) */
+    .reviewsWrap{ padding: 70px 0; }
+    .reviewsHeader{
+      display:flex;
+      align-items:flex-end;
+      justify-content:space-between;
+      gap:16px;
+      margin-bottom: 16px;
+    }
+    .reviewsHeader .sectionTitle{ font-size: 40px; margin:0; }
+    .reviewsSub{
+      margin: 0;
+      color: rgba(10,15,30,.72);
+      font-weight:900;
+      max-width: 80ch;
+    }
+
+    .carouselLight{
+      position:relative;
+      margin-top: 18px;
+      border-radius: 18px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: rgba(255,255,255,.95);
+      overflow:hidden;
+      box-shadow: 0 12px 36px rgba(0,0,0,.12);
+    }
+    .track{
+      display:flex;
+      overflow:auto;
+      scroll-snap-type: x mandatory;
+      scroll-behavior:smooth;
+      -webkit-overflow-scrolling: touch;
+    }
+    .track::-webkit-scrollbar{ height: 10px; }
+    .track::-webkit-scrollbar-thumb{ background: rgba(0,0,0,.12); border-radius: 999px; }
+
+    .slide{
+      flex: 0 0 100%;
+      scroll-snap-align: start;
+      padding: 22px;
+    }
+    .reviewsGrid{
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+
+    .reviewCard{
+      border-radius: 16px;
+      border: 1px solid rgba(0,0,0,.08);
+      background: #ffffff;
+      padding: 16px;
+      box-shadow: 0 10px 26px rgba(0,0,0,.08);
+      display:flex;
+      flex-direction:column;
+      gap: 12px;
+      min-height: 260px;
+    }
+
+    .reviewTop{
+      display:flex;
+      gap:12px;
+      align-items:flex-start;
+    }
+    .avatar{
+      width:42px; height:42px;
+      border-radius: 999px;
+      display:grid; place-items:center;
+      font-weight:1100;
+      color:#0a0f1e;
+      background: linear-gradient(135deg, rgba(215,180,106,.92), rgba(18,58,116,.10));
+      border: 1px solid rgba(0,0,0,.08);
+      flex: 0 0 auto;
+    }
+    .reviewName{
+      margin:0;
+      font-size: 15px;
+      font-weight:1100;
+      color:#0a0f1e;
+      line-height:1.2;
+    }
+    .stars{
+      margin-top:6px;
+      color: var(--gold-700);
+      font-weight:1100;
+      letter-spacing:1px;
+      font-size: 12px;
+    }
+    .reviewBody{
+      margin:0;
+      color: rgba(10,15,30,.78);
+      font-weight:800;
+      line-height:1.55;
+      font-size: 13px;
+    }
+    .printBox{
+      margin-top:auto;
+      border-radius: 12px;
+      border: 1px solid rgba(0,0,0,.10);
+      overflow:hidden;
+      background: rgba(0,0,0,.02);
+      min-height: 120px;
+    }
+    .printBox img{
+      width:100%;
+      height:100%;
+      object-fit:cover;
+      display:block;
+    }
+    .badgeGoogleLight{
+      display:inline-flex;
+      align-items:center;
+      gap:8px;
+      padding:8px 10px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.10);
+      background: rgba(0,0,0,.02);
+      font-weight:1000;
+      color: rgba(10,15,30,.78);
+      font-size: 12px;
+      width: fit-content;
+    }
+
+    .navBtn{
+      position:absolute;
+      top: 50%;
+      transform: translateY(-50%);
+      width: 44px; height: 44px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.12);
+      background: rgba(255,255,255,.90);
+      color: #0a0f1e;
+      display:grid; place-items:center;
+      cursor:pointer;
+      z-index: 2;
+      box-shadow: 0 10px 22px rgba(0,0,0,.12);
+      user-select:none;
+    }
+    .navBtn:hover{ filter: brightness(1.02); }
+    .navPrev{ left: 14px; }
+    .navNext{ right: 14px; }
+
+    .dots{
+      display:flex;
+      justify-content:center;
+      gap:8px;
+      margin-top: 14px;
+    }
+    .dot{
+      width: 9px; height: 9px;
+      border-radius: 999px;
+      border: 1px solid rgba(0,0,0,.18);
+      background: rgba(0,0,0,.10);
+      cursor:pointer;
+    }
+    .dot.active{
+      background: rgba(185,133,42,.95);
+      border-color: rgba(185,133,42,.45);
+    }
+
+    .reviewsMeta{
+      margin-top: 14px;
+      text-align:center;
+      color: rgba(10,15,30,.70);
+      font-weight:900;
+      font-size:13px;
+    }
+    .reviewsMeta b{ color: rgba(185,133,42,.98); }
+
+    /* BENEFÍCIOS */
+    .benefits{ padding: 74px 0; }
+    .benefitsTitle{
+      font-size: 40px;
+      margin: 0 0 10px;
+      font-weight:1100;
+      letter-spacing:-.2px;
+    }
+    .benefitsGrid{
+      margin-top: 18px;
+      display:grid;
+      grid-template-columns: repeat(3, minmax(0,1fr));
+      gap: 14px;
+    }
+    .benefitCard{
+      border-radius: 18px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(6,10,19,.35);
+      padding: 18px;
+      box-shadow: 0 10px 40px rgba(0,0,0,.22);
+    }
+    .benefitTop{ display:flex; align-items:center; gap:10px; margin-bottom: 10px; }
+    .benefitIco{
+      width:44px; height:44px;
+      border-radius: 14px;
+      display:grid; place-items:center;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      font-size: 18px;
+    }
+    .benefitCard h3{ margin: 0; font-size: 16px; font-weight:1100; }
+    .benefitCard p{ margin: 10px 0 0; color: var(--muted); font-weight:900; line-height:1.55; }
+
+    /* FORM (mais intuitivo, sem foto) */
+    .formSection{ padding: 72px 0 60px; }
+    .formGrid{
+      display:grid;
+      grid-template-columns: 1fr 1fr;
+      gap:16px;
+      align-items:stretch;
+      margin-top:14px;
+    }
+    .card{
+      border-radius:16px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(6,10,19,.35);
+      padding:18px;
+    }
+    .miniTitle{
+      margin:0 0 8px;
+      font-size: 18px;
+      font-weight:1100;
+      letter-spacing:-.2px;
+    }
+    .list{
+      margin: 12px 0 0;
+      padding: 0;
+      list-style: none;
+      display:grid;
+      gap: 10px;
+    }
+    .li{
+      display:flex;
+      gap:10px;
+      align-items:flex-start;
+      color: rgba(236,242,255,.86);
+      font-weight:900;
+      line-height:1.55;
+      font-size: 13px;
+    }
+    .dotGold{
+      width:10px; height:10px;
+      border-radius: 999px;
+      background: rgba(215,180,106,.95);
+      margin-top: 6px;
+      flex: 0 0 auto;
+    }
+
+    label{
+      display:block;
+      margin:12px 0 6px;
+      color: var(--muted);
+      font-weight:1000;
+      font-size:12px;
+    }
+    input{
+      width:100%;
+      padding:13px 12px;
+      border-radius:14px;
+      border:1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.05);
+      color: var(--text);
+      outline:none;
+      font-size:14px;
+      font-weight:900;
+    }
+    input:focus{border-color: rgba(18,58,116,.75)}
+    .actions{
+      margin-top:14px;
+      display:flex; gap:10px; flex-wrap:wrap;
+    }
+
+    /* FOOTER */
+    .footer{
+      padding: 58px 0 22px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      background:
+        radial-gradient(900px 420px at 20% 20%, rgba(18,58,116,.35), transparent 60%),
+        radial-gradient(900px 420px at 85% 10%, rgba(215,180,106,.16), transparent 65%),
+        rgba(6,10,19,.65);
+      backdrop-filter: blur(10px);
+    }
+    .footerGrid{
+      display:grid;
+      grid-template-columns: 1.2fr 1fr 1fr;
+      gap: 18px;
+      align-items:start;
+    }
+    .footerTitle{
+      margin:0 0 10px;
+      font-size: 16px;
+      font-weight:1100;
+      color: rgba(255,255,255,.92);
+    }
+    .footerP{
+      margin:0;
+      color: rgba(255,255,255,.78);
+      font-weight:900;
+      line-height:1.6;
+      max-width: 52ch;
+    }
+    .footerList{
+      margin:0;
+      padding:0;
+      list-style:none;
+      display:grid;
+      gap: 10px;
+      color: rgba(255,255,255,.82);
+      font-weight:900;
+    }
+    .footerItem{ display:flex; gap:10px; align-items:flex-start; }
+    .footerDot{
+      width:10px; height:10px;
+      border-radius: 999px;
+      background: rgba(215,180,106,.95);
+      margin-top: 6px;
+      flex: 0 0 auto;
+    }
+    .igBtn{
+      margin-top: 14px;
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      gap:10px;
+      padding: 12px 14px;
+      border-radius: 14px;
+      border: 1px solid rgba(215,180,106,.35);
+      background: rgba(255,255,255,.06);
+      font-weight:1100;
+      box-shadow: 0 10px 28px rgba(0,0,0,.25);
+    }
+    .footerBottom{
+      margin-top: 18px;
+      padding-top: 16px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      text-align:center;
+      color: rgba(255,255,255,.68);
+      font-size: 12px;
+      font-weight:900;
+    }
+
+    @media (max-width: 980px){
+      .heroTitle{font-size:38px}
+      .heroFull{min-height: 460px; padding: 56px 0 52px;}
+      .aboutGrid{grid-template-columns:1fr}
+      .aboutPhoto{justify-self:start; max-width: 520px;}
+      .reviewsGrid{grid-template-columns:1fr}
+      .formGrid{grid-template-columns:1fr}
+      .benefitsGrid{grid-template-columns:1fr}
+      .footerGrid{grid-template-columns:1fr}
+      .reviewsHeader{flex-direction:column; align-items:flex-start}
+      .reviewsHeader .sectionTitle{font-size:34px}
+      .benefitsTitle{font-size:34px}
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg"></div>
+  <div class="overlay"></div>
+
+  <header class="topbar">
+    <div class="wrap">
+      <a class="brand" href="#inicio" aria-label="MRL Travel">
+        <img class="logo" src="./img/logo-mrl.png" alt="MRL Travel">
+        <div class="brandName">MRL Travel</div>
+      </a>
+
+      <a class="btn btnGold" href="#grupo">Entrar no grupo</a>
+    </div>
+  </header>
+
+  <main>
+    <!-- INÍCIO (HERO) -->
+    <section class="sectionDark" id="inicio">
+      <div class="heroFull">
+        <div class="wrap heroInner">
+          <div class="heroBlock">
+            <div class="kicker">Viaje mais, <span class="hl">pague menos.</span></div>
+
+            <h1 class="heroTitle">
+              Emitimos passagens com <span class="hl">desconto</span> e conforto para você viajar melhor.
+            </h1>
+
+            <p class="sub">
+              Receba oportunidades e alertas de preço em primeira mão, com suporte para emitir passagens com mais economia e tranquilidade.
+            </p>
+
+            <p class="subSmall">
+              Alertas diários de passagens e pacotes, orientação do início ao fim e suporte quando você precisar.
+            </p>
+
+            <div class="ctaRow">
+              <a class="btn btnGold" href="#grupo">Quero receber alertas</a>
+              <a class="btn" href="#provas">Ver depoimentos</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- QUEM -->
+    <section class="sectionLight" id="quem">
+      <div class="wrap">
+        <div class="contentMax">
+          <div class="aboutGrid">
+            <div>
+              <div class="sectionTitle">Quem é Michael Bragança?</div>
+
+              <p class="p">
+                Eu sou o Michael, responsável pela MRL Travel. Meu foco é te ajudar a viajar com mais economia e tranquilidade, cuidando de cada etapa do processo com atendimento humanizado.
+              </p>
+
+              <p class="p">
+                Eu te acompanho desde a escolha das melhores opções até a emissão, ajustes, cancelamentos, orientações de check-in e suporte pré embarque, com comunicação direta e prática.
+              </p>
+
+              <p class="p">
+                Durante a sua viagem, você não fica na mão. A MRL Travel oferece assistência e suporte quando você precisar, inclusive com acompanhamento em situações como remarcações e imprevistos.
+              </p>
+
+              <div class="ctaRow" style="justify-content:flex-start; margin-top:16px;">
+                <a class="btn btnGold" href="#grupo">Quero entrar no grupo</a>
+              </div>
+            </div>
+
+            <div class="aboutPhoto">
+              <img src="./img/michael.jpg" alt="Michael Bragança, MRL Travel">
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- DEPOIMENTOS (estilo referência, com prints) -->
+    <section class="sectionLight" id="provas">
+      <div class="wrap reviewsWrap">
+        <div class="contentMax">
+          <div class="reviewsHeader">
+            <div>
+              <div class="sectionTitle">Depoimentos</div>
+              <p class="reviewsSub">Confira a opinião de nossos clientes.</p>
+            </div>
+          </div>
+
+          <div class="carouselLight" id="reviewsCarousel">
+            <div class="track" id="reviewsTrack" aria-label="Carrossel de avaliações">
+
+              <!--
+                Coloque seus prints na pasta /img com estes nomes (ou altere o src):
+                ./img/review-leidiane.png
+                ./img/review-jocilda.png
+                ./img/review-dulcy.png
+                ./img/review-rejiane.png
+                ./img/review-carolina.png
+                ./img/review-priscila.png
+              -->
+
+              <!-- PÁGINA 1 (3 cards) -->
+              <div class="slide">
+                <div class="reviewsGrid">
+
+                  <article class="reviewCard">
+                    <div class="reviewTop">
+                      <div class="avatar" aria-hidden="true">L</div>
+                      <div>
+                        <p class="reviewName">Leidiane Roberta</p>
+                        <div class="stars">★★★★★</div>
+                      </div>
+                    </div>
+
+                    <p class="reviewBody">
+                      Minha experiência com a MRL Travel foi simplesmente incrível do início ao fim. Viagem de lua de mel para Porto de Galinhas, tudo saiu ainda melhor do que sonhamos.
+                    </p>
+
+                    <div class="badgeGoogleLight" aria-label="Fonte Google">
+                      <span>Google</span>
+                      <span style="opacity:.75;">Avaliação real</span>
+                    </div>
+
+                    <div class="printBox">
+                      <img src="./img/review-leidiane.png" alt="Print de avaliação do Google: Leidiane Roberta">
+                    </div>
+                  </article>
+
+                  <article class="reviewCard">
+                    <div class="reviewTop">
+                      <div class="avatar" aria-hidden="true">J</div>
+                      <div>
+                        <p class="reviewName">Jocilda Carvalho de Faria</p>
+                        <div class="stars">★★★★★</div>
+                      </div>
+                    </div>
+
+                    <p class="reviewBody">
+                      Viajei na MRL Travel e deu tudo certo. Atendimento ótimo do início ao fim. O Michael foi educado, prestativo e sempre disposto a ajudar. Amei e recomendo.
+                    </p>
+
+                    <div class="badgeGoogleLight" aria-label="Fonte Google">
+                      <span>Google</span>
+                      <span style="opacity:.75;">Avaliação real</span>
+                    </div>
+
+                    <div class="printBox">
+                      <img src="./img/review-jocilda.png" alt="Print de avaliação do Google: Jocilda Carvalho de Faria">
+                    </div>
+                  </article>
+
+                  <article class="reviewCard">
+                    <div class="reviewTop">
+                      <div class="avatar" aria-hidden="true">D</div>
+                      <div>
+                        <p class="reviewName">Dulcy Tavares</p>
+                        <div class="stars">★★★★★</div>
+                      </div>
+                    </div>
+
+                    <p class="reviewBody">
+                      Foi maravilhoso. Desde a saída, a estadia e os passeios, a MRL Travel nos proporcionou uma viagem sem preocupações. Foi ótimo viajar com vocês.
+                    </p>
+
+                    <div class="badgeGoogleLight" aria-label="Fonte Google">
+                      <span>Google</span>
+                      <span style="opacity:.75;">Avaliação real</span>
+                    </div>
+
+                    <div class="printBox">
+                      <img src="./img/review-dulcy.png" alt="Print de avaliação do Google: Dulcy Tavares">
+                    </div>
+                  </article>
+
+                </div>
+              </div>
+
+              <!-- PÁGINA 2 (3 cards) -->
+              <div class="slide">
+                <div class="reviewsGrid">
+
+                  <article class="reviewCard">
+                    <div class="reviewTop">
+                      <div class="avatar" aria-hidden="true">R</div>
+                      <div>
+                        <p class="reviewName">Rejiane Lima</p>
+                        <div class="stars">★★★★★</div>
+                      </div>
+                    </div>
+
+                    <p class="reviewBody">
+                      Ótimo atendimento e assessoria. Atendimento rápido para escolha de voos e hotel, viajar com minha pequena foi tranquilo. Organização excelente, nota 10.
+                    </p>
+
+                    <div class="badgeGoogleLight" aria-label="Fonte Google">
+                      <span>Google</span>
+                      <span style="opacity:.75;">Avaliação real</span>
+                    </div>
+
+                    <div class="printBox">
+                      <img src="./img/review-rejiane.png" alt="Print de avaliação do Google: Rejiane Lima">
+                    </div>
+                  </article>
+
+                  <article class="reviewCard">
+                    <div class="reviewTop">
+                      <div class="avatar" aria-hidden="true">C</div>
+                      <div>
+                        <p class="reviewName">Carolina Lacerda</p>
+                        <div class="stars">★★★★★</div>
+                      </div>
+                    </div>
+
+                    <p class="reviewBody">
+                      Viajamos em família e deu tudo certo. Fomos muito bem recepcionados. O Michael foi muito atencioso. Só chegamos no aeroporto e fomos direto ao embarque.
+                    </p>
+
+                    <div class="badgeGoogleLight" aria-label="Fonte Google">
+                      <span>Google</span>
+                      <span style="opacity:.75;">Avaliação real</span>
+                    </div>
+
+                    <div class="printBox">
+                      <img src="./img/review-carolina.png" alt="Print de avaliação do Google: Carolina Lacerda">
+                    </div>
+                  </article>
+
+                  <article class="reviewCard">
+                    <div class="reviewTop">
+                      <div class="avatar" aria-hidden="true">P</div>
+                      <div>
+                        <p class="reviewName">Priscila Modesto Alves</p>
+                        <div class="stars">★★★★★</div>
+                      </div>
+                    </div>
+
+                    <p class="reviewBody">
+                      Viagem para Gramado totalmente organizada pela MRL Travel, foi perfeita. Assistência completa e sem problemas. Já fechei a próxima viagem com eles.
+                    </p>
+
+                    <div class="badgeGoogleLight" aria-label="Fonte Google">
+                      <span>Google</span>
+                      <span style="opacity:.75;">Avaliação real</span>
+                    </div>
+
+                    <div class="printBox">
+                      <img src="./img/review-priscila.png" alt="Print de avaliação do Google: Priscila Modesto Alves">
+                    </div>
+                  </article>
+
+                </div>
+              </div>
+
+            </div>
+
+            <div class="navBtn navPrev" id="revPrev" aria-label="Anterior">‹</div>
+            <div class="navBtn navNext" id="revNext" aria-label="Próximo">›</div>
+          </div>
+
+          <div class="dots" id="reviewsDots" aria-label="Indicadores do carrossel"></div>
+
+          <div class="reviewsMeta">
+            Avaliação <b>5,0</b> no Google, com base em <b>79 avaliações</b>.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- BENEFÍCIOS DO GRUPO VIP -->
+    <section class="sectionDark" id="beneficios">
+      <div class="wrap benefits">
+        <div class="contentMax">
+          <div class="benefitsTitle">Benefícios do Grupo VIP</div>
+          <p class="p">
+            Um canal direto para quem quer viajar mais, pagando menos, com suporte de verdade em cada etapa.
+          </p>
+
+          <div class="benefitsGrid">
+            <div class="benefitCard">
+              <div class="benefitTop">
+                <div class="benefitIco" aria-hidden="true">⚡</div>
+                <h3>Ofertas em primeira mão</h3>
+              </div>
+              <p>Você recebe oportunidades assim que aparecem, para aproveitar antes de subir ou acabar.</p>
+            </div>
+
+            <div class="benefitCard">
+              <div class="benefitTop">
+                <div class="benefitIco" aria-hidden="true">🔔</div>
+                <h3>Alertas de preço</h3>
+              </div>
+              <p>Quando surgir um bom valor (ou uma queda), você fica sabendo e decide rápido.</p>
+            </div>
+
+            <div class="benefitCard">
+              <div class="benefitTop">
+                <div class="benefitIco" aria-hidden="true">🎯</div>
+                <h3>Indicações selecionadas</h3>
+              </div>
+              <p>Curadoria com foco em custo-benefício, conforto e opções que realmente fazem sentido.</p>
+            </div>
+
+            <div class="benefitCard">
+              <div class="benefitTop">
+                <div class="benefitIco" aria-hidden="true">🤝</div>
+                <h3>Atendimento humanizado</h3>
+              </div>
+              <p>Orientação clara, comunicação direta e transparência do começo ao fim.</p>
+            </div>
+
+            <div class="benefitCard">
+              <div class="benefitTop">
+                <div class="benefitIco" aria-hidden="true">🧭</div>
+                <h3>Dicas práticas e suporte</h3>
+              </div>
+              <p>Check-in, bagagem, documentos, melhores horários e o que ajuda sua viagem a fluir.</p>
+            </div>
+
+            <div class="benefitCard">
+              <div class="benefitTop">
+                <div class="benefitIco" aria-hidden="true">🛟</div>
+                <h3>Assistência quando precisar</h3>
+              </div>
+              <p>Suporte em imprevistos e remarcações, para você viajar com mais tranquilidade.</p>
+            </div>
+          </div>
+
+          <div class="ctaRow" style="margin-top:18px;">
+            <a class="btn btnGold" href="#grupo">Quero receber as promoções</a>
+            <a class="btn" href="#provas">Ver depoimentos</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- FORM (mais intuitivo) -->
+    <section class="sectionDark" id="grupo">
+      <div class="wrap formSection">
+        <div class="contentMax">
+          <div class="sectionTitle" style="font-size:34px;">Receber alertas diários</div>
+
+          <div class="formGrid">
+            <div class="card">
+              <div class="miniTitle">Quer receber alertas de passagens e pacotes todos os dias?</div>
+              <p class="p" style="max-width:none;">
+                Preencha o formulário ao lado e, após enviar, você será redirecionado para a página de obrigado e, em seguida, para o link do nosso grupo VIP.
+              </p>
+
+              <ul class="list" aria-label="O que você vai receber">
+                <li class="li"><span class="dotGold" aria-hidden="true"></span><span>Alertas diários de passagens e pacotes com ótimo custo-benefício.</span></li>
+                <li class="li"><span class="dotGold" aria-hidden="true"></span><span>Ofertas relâmpago (quando aparecem, podem acabar rápido).</span></li>
+                <li class="li"><span class="dotGold" aria-hidden="true"></span><span>Dicas práticas para viajar melhor, com mais economia e menos dor de cabeça.</span></li>
+              </ul>
+
+              <div class="ctaRow" style="justify-content:flex-start;">
+                <a class="btn" href="#provas">Ver avaliações</a>
+              </div>
+            </div>
+
+            <div class="card">
+              <form id="vipForm" autocomplete="on">
+                <label for="nome">Nome</label>
+                <input id="nome" name="nome" type="text" placeholder="Ex: Michael" required minlength="2" />
+
+                <label for="whatsapp">WhatsApp</label>
+                <input id="whatsapp" name="whatsapp" type="tel" placeholder="(00) 00000 0000" required inputmode="tel" />
+
+                <label for="email">Email (opcional)</label>
+                <input id="email" name="email" type="email" placeholder="seuemail@dominio.com" />
+
+                <div class="actions">
+                  <button class="btn btnGold" type="submit">Entrar no grupo</button>
+                  <button class="btn" type="button" id="limpar">Limpar</button>
+                </div>
+              </form>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <!-- FOOTER -->
+  <footer class="footer">
+    <div class="wrap">
+      <div class="contentMax">
+        <div class="footerGrid">
+          <div>
+            <div class="footerTitle">MRL Travel</div>
+            <p class="footerP">
+              Ofertas, suporte e atendimento humanizado para você viajar com mais economia e tranquilidade.
+            </p>
+
+            <a class="igBtn" href="https://www.instagram.com/mrltravel/" target="_blank" rel="noopener noreferrer">
+              <span aria-hidden="true">📷</span>
+              <span>Seguir no Instagram</span>
+            </a>
+          </div>
+
+          <div>
+            <div class="footerTitle">Contato</div>
+            <ul class="footerList">
+              <li class="footerItem">
+                <span class="footerDot" aria-hidden="true"></span>
+                <span><b>WhatsApp:</b> <a href="tel:+5537999678786">(37) 9 9967-8786</a></span>
+              </li>
+              <li class="footerItem">
+                <span class="footerDot" aria-hidden="true"></span>
+                <span><b>Email:</b> <a href="mailto:contato@mrltravel.com">contato@mrltravel.com</a></span>
+              </li>
+            </ul>
+          </div>
+
+          <div>
+            <div class="footerTitle">Escritório</div>
+            <ul class="footerList">
+              <li class="footerItem">
+                <span class="footerDot" aria-hidden="true"></span>
+                <span><b>Cidade:</b> <a href="https://www.google.com/maps/search/?api=1&query=Pomp%C3%A9u%20MG" target="_blank" rel="noopener noreferrer">Pompéu, MG</a></span>
+              </li>
+              <li class="footerItem">
+                <span class="footerDot" aria-hidden="true"></span>
+                <span><b>Atendimento:</b> online e com suporte em cada etapa</span>
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="footerBottom">
+          © <span id="year"></span> MRL Travel. Todos os direitos reservados.
+        </div>
+      </div>
+    </div>
+  </footer>
+
+  <script>
+    /* Cole aqui o link do seu grupo VIP */
+    const GROUP_LINK = "https://chat.whatsapp.com/KZ1hgGkZMog5JsdCWHSr96";
+
+    function formatPhoneBR(v){
+      const d = v.replace(/\D/g, "").slice(0, 11);
+      if (d.length <= 2) return d;
+      if (d.length <= 7) return `(${d.slice(0,2)}) ${d.slice(2)}`;
+      return `(${d.slice(0,2)}) ${d.slice(2,7)} ${d.slice(7)}`;
+    }
+
+    const form = document.getElementById("vipForm");
+    const nome = document.getElementById("nome");
+    const whatsapp = document.getElementById("whatsapp");
+    const email = document.getElementById("email");
+
+    whatsapp.addEventListener("input", (e) => {
+      e.target.value = formatPhoneBR(e.target.value);
+    });
+
+    document.getElementById("limpar").addEventListener("click", () => {
+      form.reset();
+      nome.focus();
+    });
+
+    form.addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const n = nome.value.trim();
+      const w = whatsapp.value.replace(/\D/g, "");
+      const em = email.value.trim();
+
+      if (n.length < 2) { alert("Informe seu nome."); nome.focus(); return; }
+      if (w.length < 10) { alert("Informe um WhatsApp válido."); whatsapp.focus(); return; }
+
+      const params = new URLSearchParams({ nome: n, whatsapp: w, email: em, next: GROUP_LINK });
+      window.location.href = `obrigado.html?${params.toString()}`;
+    });
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    /* Carrossel de depoimentos (por páginas) */
+    (function reviewsCarousel(){
+      const track = document.getElementById("reviewsTrack");
+      const dotsWrap = document.getElementById("reviewsDots");
+      const prev = document.getElementById("revPrev");
+      const next = document.getElementById("revNext");
+
+      if(!track || !dotsWrap || !prev || !next) return;
+
+      const slides = Array.from(track.querySelectorAll(".slide"));
+      const total = slides.length;
+
+      function slideWidth(){
+        return track.clientWidth;
+      }
+
+      function goTo(index){
+        const x = index * slideWidth();
+        track.scrollTo({ left: x, behavior: "smooth" });
+      }
+
+      function activeIndex(){
+        const w = slideWidth() || 1;
+        return Math.round(track.scrollLeft / w);
+      }
+
+      function renderDots(){
+        dotsWrap.innerHTML = "";
+        slides.forEach((_, i) => {
+          const b = document.createElement("button");
+          b.className = "dot" + (i === 0 ? " active" : "");
+          b.type = "button";
+          b.setAttribute("aria-label", `Ir para página ${i+1} de depoimentos`);
+          b.addEventListener("click", () => goTo(i));
+          dotsWrap.appendChild(b);
+        });
+      }
+
+      function setActiveDot(i){
+        const dots = Array.from(dotsWrap.querySelectorAll(".dot"));
+        dots.forEach((d, idx) => d.classList.toggle("active", idx === i));
+      }
+
+      renderDots();
+
+      prev.addEventListener("click", () => {
+        const i = activeIndex();
+        goTo(Math.max(0, i - 1));
+      });
+
+      next.addEventListener("click", () => {
+        const i = activeIndex();
+        goTo(Math.min(total - 1, i + 1));
+      });
+
+      let raf = null;
+      track.addEventListener("scroll", () => {
+        if(raf) cancelAnimationFrame(raf);
+        raf = requestAnimationFrame(() => setActiveDot(activeIndex()));
+      });
+
+      window.addEventListener("resize", () => {
+        goTo(activeIndex());
+      });
+    })();
+  </script>
+</body>
+</html>

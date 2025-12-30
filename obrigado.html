@@ -1,0 +1,319 @@
+<!doctype html>
+<html lang="pt-br">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MRL Travel | Obrigado</title>
+  <meta name="description" content="Obrigado por preencher o formulário. Você será redirecionado(a) para o Grupo VIP da MRL Travel." />
+  <meta name="theme-color" content="#0b1f3b" />
+
+  <style>
+    :root{
+      /* Paleta MRL */
+      --blue-900:#060a13;
+      --blue-800:#0b1f3b;
+      --blue-700:#123a74;
+
+      --gold-600:#d7b46a;
+      --gold-700:#b9852a;
+
+      --text:#ecf2ff;
+      --muted:#b9c6ea;
+      --border:rgba(255,255,255,.12);
+      --shadow: 0 18px 60px rgba(0,0,0,.45);
+
+      /* ATENÇÃO: ajuste o nome do arquivo para o seu */
+      /* Ex: ./img/obrigado_bg.png ou ./img/obrigado_bg.jpg */
+      --thanksBg: url("./img/obrigado_bg.png");
+
+      --pad: 18px;
+      --cardMax: 860px;
+    }
+
+    *{box-sizing:border-box}
+    html,body{height:100%}
+    body{
+      margin:0;
+      font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial;
+      color:var(--text);
+      background: var(--blue-900);
+      line-height:1.45;
+      overflow-x:hidden;
+    }
+    a{color:inherit; text-decoration:none}
+
+    /* Fundo */
+    .bg{
+      position:fixed; inset:0; z-index:-3;
+      background-image: var(--thanksBg);
+      background-size: cover;
+      background-position:center;
+      background-repeat:no-repeat;
+      transform: scale(1.02);
+      filter: saturate(1.05) contrast(1.05);
+    }
+    .overlay{
+      position:fixed; inset:0; z-index:-2;
+      background:
+        radial-gradient(1100px 700px at 20% 15%, rgba(18,58,116,.45), transparent 60%),
+        radial-gradient(900px 600px at 85% 20%, rgba(215,180,106,.18), transparent 65%),
+        linear-gradient(180deg, rgba(6,10,19,.60), rgba(6,10,19,.88));
+    }
+
+    /* Centralização total */
+    .center{
+      min-height: 100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding: 28px var(--pad);
+    }
+
+    /* Card no estilo “benefícios” */
+    .card{
+      width:min(var(--cardMax), 100%);
+      border-radius: 22px;
+      border: 1px solid var(--border);
+      background: rgba(6,10,19,.35);
+      box-shadow: 0 10px 40px rgba(0,0,0,.30);
+      backdrop-filter: blur(10px);
+      padding: 24px;
+    }
+
+    .brandRow{
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      gap: 12px;
+      margin-bottom: 14px;
+      text-align:center;
+    }
+
+    /* Remove “quadrado branco” do logo (não aplica fundo no CSS) */
+    .logo{
+      height: 34px;
+      width:auto;
+      display:block;
+      background: transparent;
+      box-shadow: none;
+      border-radius: 0;
+      filter: drop-shadow(0 10px 18px rgba(0,0,0,.35));
+    }
+    .brandName{
+      font-weight:1100;
+      letter-spacing:.2px;
+    }
+
+    .kicker{
+      text-align:center;
+      font-weight:1100;
+      font-size: 12px;
+      color: rgba(236,242,255,.78);
+      letter-spacing:.22px;
+      text-transform: uppercase;
+      margin-top: 6px;
+    }
+
+    h1{
+      margin: 10px 0 10px;
+      font-size: 44px;
+      line-height:1.05;
+      letter-spacing:-.3px;
+      text-align:center;
+    }
+    .hl{ color: var(--gold-600); font-weight:1100; }
+
+    .sub{
+      margin: 0 auto;
+      text-align:center;
+      color: rgba(236,242,255,.86);
+      font-weight:900;
+      max-width: 70ch;
+      font-size: 14px;
+      line-height:1.7;
+    }
+
+    .miniInfo{
+      margin-top: 16px;
+      border-radius: 16px;
+      border: 1px solid rgba(255,255,255,.12);
+      background: rgba(255,255,255,.06);
+      padding: 14px;
+      display:grid;
+      gap: 10px;
+    }
+    .miniTitle{
+      margin:0;
+      font-weight:1100;
+      font-size: 13px;
+      letter-spacing:-.2px;
+      color: rgba(236,242,255,.92);
+      text-align:left;
+    }
+    .miniText{
+      margin:0;
+      color: rgba(236,242,255,.78);
+      font-weight:900;
+      font-size: 12px;
+      line-height:1.55;
+      text-align:left;
+    }
+
+    .progress{
+      height: 10px;
+      border-radius: 999px;
+      background: rgba(255,255,255,.10);
+      overflow:hidden;
+      border: 1px solid rgba(255,255,255,.12);
+    }
+    .bar{
+      height:100%;
+      width:0%;
+      border-radius: 999px;
+      background: linear-gradient(90deg, rgba(215,180,106,.98), rgba(18,58,116,.35));
+      transition: width .2s linear;
+    }
+
+    .timer{
+      font-size: 12px;
+      color: rgba(236,242,255,.78);
+      font-weight:900;
+      text-align:left;
+    }
+
+    .ctaRow{
+      margin-top: 16px;
+      display:flex;
+      gap:10px;
+      flex-wrap:wrap;
+      align-items:center;
+      justify-content:center;
+    }
+
+    .btn{
+      display:inline-flex;
+      align-items:center;
+      justify-content:center;
+      padding: 11px 14px;
+      border-radius: 12px;
+      border: 1px solid rgba(255,255,255,.14);
+      background: rgba(255,255,255,.06);
+      color: var(--text);
+      font-weight:1100;
+      cursor:pointer;
+      box-shadow: 0 10px 24px rgba(0,0,0,.22);
+      transition: transform .12s ease, filter .12s ease;
+    }
+    .btn:active{ transform: translateY(1px); }
+    .btnGold{
+      border: 1px solid rgba(215,180,106,.35);
+      background: linear-gradient(180deg, rgba(215,180,106,.96), rgba(185,133,42,.96));
+      color: #0a0f1e;
+    }
+
+    .footerNote{
+      margin-top: 18px;
+      padding-top: 14px;
+      border-top: 1px solid rgba(255,255,255,.10);
+      color: rgba(236,242,255,.68);
+      font-size: 12px;
+      font-weight:900;
+      text-align:center;
+    }
+
+    @media (max-width: 640px){
+      h1{ font-size: 34px; }
+      .card{ padding: 18px; border-radius: 18px; }
+      .logo{ height: 30px; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="bg"></div>
+  <div class="overlay"></div>
+
+  <main class="center">
+    <section class="card" aria-label="Página de obrigado">
+      <div class="brandRow">
+        <img class="logo" src="./img/logo-mrl.png" alt="MRL Travel">
+        <div class="brandName">MRL Travel</div>
+      </div>
+
+      <div class="kicker">Cadastro recebido</div>
+
+      <h1>Obrigado<span class="hl">!</span></h1>
+
+      <p class="sub">
+        Em instantes você será redirecionado(a) para o nosso grupo VIP, onde enviamos alertas diários de passagens e pacotes.
+      </p>
+
+      <div class="miniInfo" role="status" aria-live="polite">
+        <p class="miniTitle">Redirecionamento automático</p>
+        <p class="miniText">Se não abrir sozinho, clique no botão abaixo para entrar no grupo.</p>
+
+        <div class="progress" aria-hidden="true">
+          <div class="bar" id="bar"></div>
+        </div>
+        <div class="timer" id="timer">Redirecionando em 5s...</div>
+      </div>
+
+      <div class="ctaRow">
+        <a class="btn btnGold" id="goGroup" href="#" rel="noopener noreferrer">Entrar no grupo agora</a>
+        <a class="btn" href="./index.html">Voltar</a>
+      </div>
+
+      <div class="footerNote">
+        © <span id="year"></span> MRL Travel. Todos os direitos reservados.
+      </div>
+    </section>
+  </main>
+
+  <script>
+    function getParam(name){
+      const url = new URL(window.location.href);
+      return url.searchParams.get(name) || "";
+    }
+
+    const next = (getParam("next") || "").trim();
+    const goGroup = document.getElementById("goGroup");
+
+    if(next){
+      goGroup.href = next;
+    }else{
+      goGroup.href = "./index.html";
+      goGroup.textContent = "Voltar para a página inicial";
+    }
+
+    document.getElementById("year").textContent = new Date().getFullYear();
+
+    const secondsTotal = 5;
+    let remaining = secondsTotal;
+
+    const bar = document.getElementById("bar");
+    const timer = document.getElementById("timer");
+
+    function updateUI(){
+      const done = (secondsTotal - remaining) / secondsTotal;
+      bar.style.width = Math.round(done * 100) + "%";
+      timer.textContent = "Redirecionando em " + remaining + "s...";
+    }
+
+    updateUI();
+
+    const interval = setInterval(() => {
+      remaining -= 1;
+      if(remaining <= 0){
+        clearInterval(interval);
+        bar.style.width = "100%";
+        timer.textContent = "Redirecionando...";
+        if(next){
+          window.location.href = `./obrigado.html?${params.toString()}`;
+        }
+        return;
+      }
+      updateUI();
+    }, 1000);
+  </script>
+</body>
+</html>

@@ -1026,112 +1026,81 @@
     </div>
   </footer>
 
-  <script>
-    /* Cole aqui o link do seu grupo VIP */
-    const GROUP_LINK = "https://chat.whatsapp.com/KZ1hgGkZMog5JsdCWHSr96";
+ <script>
+  const GROUP_LINK = "https://chat.whatsapp.com/KZ1hgGkZMog5JsdCWHSr96";
 
-    function formatPhoneBR(v){
-      const d = v.replace(/\D/g, "").slice(0, 11);
-      if (d.length <= 2) return d;
-      if (d.length <= 7) return `(${d.slice(0,2)}) ${d.slice(2)}`;
-      return `(${d.slice(0,2)}) ${d.slice(2,7)} ${d.slice(7)}`;
+  function formatPhoneBR(v){
+    const d = v.replace(/\D/g, "").slice(0, 11);
+    if (d.length <= 2) return d;
+    if (d.length <= 7) return `(${d.slice(0,2)}) ${d.slice(2)}`;
+    return `(${d.slice(0,2)}) ${d.slice(2,7)} ${d.slice(7)}`;
+  }
+
+  const form = document.getElementById("vipForm");
+  const nome = document.getElementById("nome");
+  const whatsapp = document.getElementById("whatsapp");
+  const email = document.getElementById("email");
+  const btnLimpar = document.getElementById("limpar");
+  const btnSubmit = form.querySelector('button[type="submit"]');
+
+  whatsapp.addEventListener("input", (e) => {
+    e.target.value = formatPhoneBR(e.target.value);
+  });
+
+  btnLimpar.addEventListener("click", () => {
+    form.reset();
+    nome.focus();
+  });
+
+  async function sendLeadToApi({ nome, whatsapp, email }) {
+    const res = await fetch("/api/lead", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({
+        nome,
+        whatsapp,
+        email,
+        origem: "Landing Grupo VIP",
+        page: window.location.href
+      })
+    });
+
+    if (!res.ok) {
+      const txt = await res.text().catch(() => "");
+      throw new Error(txt || "Falha ao enviar lead");
     }
 
-    const form = document.getElementById("vipForm");
-    const nome = document.getElementById("nome");
-    const whatsapp = document.getElementById("whatsapp");
-    const email = document.getElementById("email");
+    return res.json().catch(() => ({}));
+  }
 
-    whatsapp.addEventListener("input", (e) => {
-      e.target.value = formatPhoneBR(e.target.value);
-    });
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
 
-    document.getElementById("limpar").addEventListener("click", () => {
-      form.reset();
-      nome.focus();
-    });
+    const n = nome.value.trim();
+    const w = whatsapp.value.replace(/\D/g, "");
+    const em = email.value.trim();
 
-    form.addEventListener("submit", (e) => {
-      e.preventDefault();
+    if (n.length < 2) { alert("Informe seu nome."); nome.focus(); return; }
+    if (w.length < 10) { alert("Informe um WhatsApp válido."); whatsapp.focus(); return; }
 
-      const n = nome.value.trim();
-      const w = whatsapp.value.replace(/\D/g, "");
-      const em = email.value.trim();
+    btnSubmit.disabled = true;
+    btnSubmit.textContent = "Enviando...";
 
-      if (n.length < 2) { alert("Informe seu nome."); nome.focus(); return; }
-      if (w.length < 10) { alert("Informe um WhatsApp válido."); whatsapp.focus(); return; }
+    try {
+      await sendLeadToApi({ nome: n, whatsapp: w, email: em });
+    } catch (err) {
+      console.error(err);
+      alert("Não consegui salvar seu cadastro agora. Você ainda pode entrar no grupo e nós te ajudamos por lá.");
+    } finally {
+      btnSubmit.disabled = false;
+      btnSubmit.textContent = "Entrar no grupo";
+    }
 
-      const params = new URLSearchParams({ nome: n, whatsapp: w, email: em, next: GROUP_LINK });
-      window.location.href = `obrigado.html?${params.toString()}`;
-    });
+    const params = new URLSearchParams({ nome: n, whatsapp: w, email: em, next: GROUP_LINK });
+    window.location.href = `obrigado.html?${params.toString()}`;
+  });
 
-    document.getElementById("year").textContent = new Date().getFullYear();
-
-    /* Carrossel de depoimentos (por páginas) */
-    (function reviewsCarousel(){
-      const track = document.getElementById("reviewsTrack");
-      const dotsWrap = document.getElementById("reviewsDots");
-      const prev = document.getElementById("revPrev");
-      const next = document.getElementById("revNext");
-
-      if(!track || !dotsWrap || !prev || !next) return;
-
-      const slides = Array.from(track.querySelectorAll(".slide"));
-      const total = slides.length;
-
-      function slideWidth(){
-        return track.clientWidth;
-      }
-
-      function goTo(index){
-        const x = index * slideWidth();
-        track.scrollTo({ left: x, behavior: "smooth" });
-      }
-
-      function activeIndex(){
-        const w = slideWidth() || 1;
-        return Math.round(track.scrollLeft / w);
-      }
-
-      function renderDots(){
-        dotsWrap.innerHTML = "";
-        slides.forEach((_, i) => {
-          const b = document.createElement("button");
-          b.className = "dot" + (i === 0 ? " active" : "");
-          b.type = "button";
-          b.setAttribute("aria-label", `Ir para página ${i+1} de depoimentos`);
-          b.addEventListener("click", () => goTo(i));
-          dotsWrap.appendChild(b);
-        });
-      }
-
-      function setActiveDot(i){
-        const dots = Array.from(dotsWrap.querySelectorAll(".dot"));
-        dots.forEach((d, idx) => d.classList.toggle("active", idx === i));
-      }
-
-      renderDots();
-
-      prev.addEventListener("click", () => {
-        const i = activeIndex();
-        goTo(Math.max(0, i - 1));
-      });
-
-      next.addEventListener("click", () => {
-        const i = activeIndex();
-        goTo(Math.min(total - 1, i + 1));
-      });
-
-      let raf = null;
-      track.addEventListener("scroll", () => {
-        if(raf) cancelAnimationFrame(raf);
-        raf = requestAnimationFrame(() => setActiveDot(activeIndex()));
-      });
-
-      window.addEventListener("resize", () => {
-        goTo(activeIndex());
-      });
-    })();
-  </script>
+  document.getElementById("year").textContent = new Date().getFullYear();
+</script>
 </body>
 </html>

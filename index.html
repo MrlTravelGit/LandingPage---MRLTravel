@@ -1074,32 +1074,37 @@
   }
 
   form.addEventListener("submit", async (e) => {
-    e.preventDefault();
+  e.preventDefault();
 
-    const n = nome.value.trim();
-    const w = whatsapp.value.replace(/\D/g, "");
-    const em = email.value.trim();
+  const n = nome.value.trim();
+  const w = whatsapp.value.replace(/\D/g, "");
+  const em = email.value.trim();
 
-    if (n.length < 2) { alert("Informe seu nome."); nome.focus(); return; }
-    if (w.length < 10) { alert("Informe um WhatsApp válido."); whatsapp.focus(); return; }
+  if (n.length < 2) { alert("Informe seu nome."); nome.focus(); return; }
+  if (w.length < 10) { alert("Informe um WhatsApp válido."); whatsapp.focus(); return; }
 
-    btnSubmit.disabled = true;
-    btnSubmit.textContent = "Enviando...";
+  btnSubmit.disabled = true;
+  btnSubmit.textContent = "Enviando...";
 
-    try {
-      await sendLeadToApi({ nome: n, whatsapp: w, email: em });
-    } catch (err) {
-      console.error(err);
-      alert("Não consegui salvar seu cadastro agora. Você ainda pode entrar no grupo e nós te ajudamos por lá.");
-    } finally {
-      btnSubmit.disabled = false;
-      btnSubmit.textContent = "Entrar no grupo";
-    }
+  try {
+    await sendLeadToApi({ nome: n, whatsapp: w, email: em });
+  } catch (err) {
+    console.error(err);
+    alert("Não consegui salvar seu cadastro agora. Você ainda pode entrar no grupo e nós te ajudamos por lá.");
+  } finally {
+    btnSubmit.disabled = false;
+    btnSubmit.textContent = "Entrar no grupo";
+  }
 
-    const params = new URLSearchParams({ nome: n, whatsapp: w, email: em, next: GROUP_LINK });
-    window.location.href = `obrigado.html?${params.toString()}`;
+  const params = new URLSearchParams({
+    nome: n,
+    whatsapp: w,
+    email: em,
+    next: GROUP_LINK
   });
 
+  window.location.href = `/obrigado.html?${params.toString()}`;
+});
   document.getElementById("year").textContent = new Date().getFullYear();
 </script>
 </body>

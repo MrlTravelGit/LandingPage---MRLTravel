@@ -90,25 +90,35 @@ async function kommoFetch(url, token, options = {}) {
 
 async function createContact({ nome, telefone }, { baseUrl, token }) {
   const phoneValue = telefone ? String(telefone) : "";
+  const nameValue = nome ? String(nome) : "";
+
+  const customFields = [];
+
+  // Nome (custom field)
+  if (nameValue) {
+    customFields.push({
+      field_id: 1024823, // ID Nome que você pediu
+      values: [{ value: nameValue }],
+    });
+  }
+
+  // Telefone/WhatsApp (custom field)
+  if (phoneValue) {
+    customFields.push({
+      field_id: 1024825, // ID Telefone que você passou
+      values: [
+        {
+          value: phoneValue, // ex: "5537999678786"
+          enum_code: "WORK",
+        },
+      ],
+    });
+  }
 
   const body = [
     {
-      name: nome,
-      ...(phoneValue
-        ? {
-            custom_fields_values: [
-              {
-                field_id: 1024825, // ID Telefone que você passou
-                values: [
-                  {
-                    value: phoneValue, // EX: "5537999678786"
-                    enum_code: "WORK", // pode manter WORK (ou PERSONAL). Se não funcionar, eu te mostro o ajuste.
-                  },
-                ],
-              },
-            ],
-          }
-        : {}),
+      name: nameValue, // também preenche o nome padrão do contato
+      ...(customFields.length ? { custom_fields_values: customFields } : {}),
     },
   ];
 
@@ -122,6 +132,17 @@ async function createContact({ nome, telefone }, { baseUrl, token }) {
 
   return contactId;
 }
+
+
+  const json = await kommoFetch(`${baseUrl}/api/v4/contacts`, token, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+
+  const contactId = json?._embedded?.contacts?.[0]?.id;
+  if (!contactId) throw new Error("Não consegui obter o ID do contato criado.");
+
+  return contactId;
 
 async function createLead({ nome }, contactId, { baseUrl, token }) {
   const body = [

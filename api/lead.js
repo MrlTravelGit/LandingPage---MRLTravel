@@ -192,9 +192,15 @@ async function createContact({ nome, telefone, email }, { baseUrl, token }, fiel
 
 async function createLead({ nome, telefone }, contactId, { baseUrl, token }, fieldIds) {
   const leadObj = {
-    name: `Lead Landing MRL - ${nome}`,
-    _embedded: { contacts: [{ id: contactId }] },
-  };
+  name: `Lead Landing MRL - ${nome}`,
+  _embedded: { contacts: [{ id: contactId }] },
+
+  // TAGS no lead
+  tags_to_add: [
+    { name: "Landing Page" },
+    { name: "Grupo VIP" }
+  ],
+};
 
   // Se os IDs existirem em leads, preenche lá também
   const leadCustomPairs = [];

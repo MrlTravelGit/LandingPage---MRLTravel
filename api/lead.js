@@ -1,27 +1,26 @@
 // api/lead.js
-// Vercel Serverless: cria Contact + Lead no Kommo
-// ENV VARS na Vercel:
+// Vercel Serverless Function
+// ENV na Vercel:
 // - KOMMO_SUBDOMAIN = mrltravel
-// - KOMMO_TOKEN = <seu access token (sem "Bearer")>
+// - KOMMO_TOKEN = <access token sem "Bearer">
 
 function onlyDigits(v = "") {
   return String(v).replace(/\D/g, "");
 }
 
 function normalizePhoneBR(v = "") {
-  // Aceita (37) 99999-9999, 37999999999, etc
-  // Retorna sempre com DDI 55 + DDD + número (13 dígitos no total com 55)
-  const d = onlyDigits(v).slice(0, 13); // caso já venha com 55
-  if (!d) return "";
+  // Retorna "+55" + DDD + número (ex: +5537999999999)
+  const d = onlyDigits(v);
 
-  // Se já começou com 55 e tem 12-13 dígitos, mantém
+  if (!d) return "";
   if (d.startsWith("55")) {
-    return d.slice(0, 13);
+    const rest = d.slice(2);
+    const local = rest.slice(0, 11);
+    return "+55" + local;
   }
 
-  // Se veio só DDD+número (10/11 dígitos), prefixa 55
   const local = d.slice(0, 11);
-  return "55" + local;
+  return "+55" + local;
 }
 
 function safeTrim(v = "") {
@@ -70,6 +69,7 @@ async function kommoFetch(url, token, options = {}) {
 
   const text = await resp.text();
   let json = null;
+
   try {
     json = text ? JSON.parse(text) : null;
   } catch {
@@ -88,43 +88,100 @@ async function kommoFetch(url, token, options = {}) {
   return json;
 }
 
-async function createContact({ nome, telefone }, { baseUrl, token }) {
-  const phoneValue = telefone ? String(telefone) : "";
-  const nameValue = nome ? String(nome) : "";
+async function getCustomFieldIds(baseUrl, token) {
+  // Descobre onde existem os field_ids (contacts vs leads)
+  // Se algum endpoint falhar, segue com fallback.
+  const ids = {
+    contacts: new Set(),
+    leads: new Set(),
+  };
 
-  const customFields = [];
-
-  // Nome (custom field)
-  if (nameValue) {
-    customFields.push({
-      field_id: 1024823, // ID Nome que você pediu
-      values: [{ value: nameValue }],
-    });
+  try {
+    const c = await kommoFetch(`${baseUrl}/api/v4/contacts/custom_fields`, token, { method: "GET" });
+    const arr = c?._embedded?.custom_fields || [];
+    arr.forEach((f) => ids.contacts.add(Number(f.id)));
+  } catch {
+    // ignora
   }
 
-  // Telefone/WhatsApp (custom field)
-  if (phoneValue) {
-    customFields.push({
-      field_id: 1024825, // ID Telefone que você passou
-      values: [
+  try {
+    const l = await kommoFetch(`${baseUrl}/api/v4/leads/custom_fields`, token, { method: "GET" });
+    const arr = l?._embedded?.custom_fields || [];
+    arr.forEach((f) => ids.leads.add(Number(f.id)));
+  } catch {
+    // ignora
+  }
+
+  return ids;
+}
+
+function buildCustomFieldsValues(pairs) {
+  // pairs: [{ field_id, value }]
+  const out = [];
+  for (const p of pairs) {
+    if (!p.field_id) continue;
+    if (p.value === undefined || p.value === null || String(p.value).trim() === "") continue;
+
+    out.push({
+      field_id: Number(p.field_id),
+      values: [{ value: String(p.value) }],
+    });
+  }
+  return out;
+}
+
+async function createContact({ nome, telefone, email }, { baseUrl, token }, fieldIds) {
+  // Contato sempre tem "name". Para telefone, usa fallback seguro com field_code PHONE se o field_id não existir em Contacts.
+  const customPairs = [];
+
+  // Se o ID 1024823 existir em contacts, preenche também (além do name padrão)
+  if (fieldIds.contacts.has(1024823)) customPairs.push({ field_id: 1024823, value: nome });
+
+  // Se o ID 1024825 existir em contacts, usa ele. Caso contrário, usa field_code PHONE.
+  const usePhoneFieldId = fieldIds.contacts.has(1024825);
+
+  const bodyContact = {
+    name: nome,
+  };
+
+  const customFields = buildCustomFieldsValues(customPairs);
+  if (customFields.length) bodyContact.custom_fields_values = customFields;
+
+  // Phone via field_code PHONE (fallback mais confiável)
+  if (telefone) {
+    if (usePhoneFieldId) {
+      bodyContact.custom_fields_values = [
+        ...(bodyContact.custom_fields_values || []),
         {
-          value: phoneValue, // ex: "5537999678786"
-          enum_code: "WORK",
+          field_id: 1024825,
+          values: [{ value: telefone }],
         },
-      ],
-    });
+      ];
+    } else {
+      bodyContact.custom_fields_values = [
+        ...(bodyContact.custom_fields_values || []),
+        {
+          field_code: "PHONE",
+          values: [{ value: telefone }],
+        },
+      ];
+    }
   }
 
-  const body = [
-    {
-      name: nameValue, // também preenche o nome padrão do contato
-      ...(customFields.length ? { custom_fields_values: customFields } : {}),
-    },
-  ];
+  // Email (se quiser gravar no Kommo também)
+  if (email) {
+    bodyContact.custom_fields_values = [
+      ...(bodyContact.custom_fields_values || []),
+      {
+        field_code: "EMAIL",
+        values: [{ value: email }],
+      },
+    ];
+  }
 
   const json = await kommoFetch(`${baseUrl}/api/v4/contacts`, token, {
     method: "POST",
-    body: JSON.stringify(body),
+    body: JSON.stringify([bodyContact]),
   });
 
   const contactId = json?._embedded?.contacts?.[0]?.id;
@@ -133,30 +190,23 @@ async function createContact({ nome, telefone }, { baseUrl, token }) {
   return contactId;
 }
 
+async function createLead({ nome, telefone }, contactId, { baseUrl, token }, fieldIds) {
+  const leadObj = {
+    name: `Lead Landing MRL - ${nome}`,
+    _embedded: { contacts: [{ id: contactId }] },
+  };
 
-  const json = await kommoFetch(`${baseUrl}/api/v4/contacts`, token, {
-    method: "POST",
-    body: JSON.stringify(body),
-  });
+  // Se os IDs existirem em leads, preenche lá também
+  const leadCustomPairs = [];
+  if (fieldIds.leads.has(1024823)) leadCustomPairs.push({ field_id: 1024823, value: nome });
+  if (telefone && fieldIds.leads.has(1024825)) leadCustomPairs.push({ field_id: 1024825, value: telefone });
 
-  const contactId = json?._embedded?.contacts?.[0]?.id;
-  if (!contactId) throw new Error("Não consegui obter o ID do contato criado.");
-
-  return contactId;
-
-async function createLead({ nome }, contactId, { baseUrl, token }) {
-  const body = [
-    {
-      name: `Lead Landing MRL - ${nome}`,
-      _embedded: {
-        contacts: [{ id: contactId }],
-      },
-    },
-  ];
+  const leadCustom = buildCustomFieldsValues(leadCustomPairs);
+  if (leadCustom.length) leadObj.custom_fields_values = leadCustom;
 
   const json = await kommoFetch(`${baseUrl}/api/v4/leads`, token, {
     method: "POST",
-    body: JSON.stringify(body),
+    body: JSON.stringify([leadObj]),
   });
 
   const leadId = json?._embedded?.leads?.[0]?.id;
@@ -181,19 +231,19 @@ export default async function handler(req, res) {
 
     const nome = safeTrim(body.nome);
     const telefone = normalizePhoneBR(body.telefone || body.whatsapp || "");
+    const email = safeTrim(body.email || "");
 
-    if (!nome || nome.length < 2) {
-      return res.status(400).json({ ok: false, error: "Informe um nome válido." });
-    }
-    if (telefone && telefone.length < 12) {
-      return res.status(400).json({ ok: false, error: "Telefone/WhatsApp inválido." });
-    }
+    if (!nome || nome.length < 2) return res.status(400).json({ ok: false, error: "Informe um nome válido." });
+    if (telefone && telefone.length < 12) return res.status(400).json({ ok: false, error: "Telefone/WhatsApp inválido." });
 
-    const contactId = await createContact({ nome, telefone }, { baseUrl, token });
-    const leadId = await createLead({ nome }, contactId, { baseUrl, token });
+    const fieldIds = await getCustomFieldIds(baseUrl, token);
+
+    const contactId = await createContact({ nome, telefone, email }, { baseUrl, token }, fieldIds);
+    const leadId = await createLead({ nome, telefone }, contactId, { baseUrl, token }, fieldIds);
 
     return res.status(200).json({ ok: true, contactId, leadId });
   } catch (err) {
+    console.error("Kommo lead error:", err?.message, err?.payload || err);
     return res.status(err.status || 500).json({
       ok: false,
       error: err.message || "Erro inesperado",

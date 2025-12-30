@@ -1073,7 +1073,7 @@
     return res.json().catch(() => ({}));
   }
 
-  form.addEventListener("submit", async (e) => {
+form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
   const n = nome.value.trim();
@@ -1086,8 +1086,11 @@
   btnSubmit.disabled = true;
   btnSubmit.textContent = "Enviando...";
 
+  let saved = 0;
+
   try {
     await sendLeadToApi({ nome: n, whatsapp: w, email: em });
+    saved = 1;
   } catch (err) {
     console.error(err);
     alert("Não consegui salvar seu cadastro agora. Você ainda pode entrar no grupo e nós te ajudamos por lá.");
@@ -1100,12 +1103,13 @@
     nome: n,
     whatsapp: w,
     email: em,
+    saved: String(saved),
     next: GROUP_LINK
   });
 
-  window.location.href = `/obrigado.html?${params.toString()}`;
+  window.location.assign(`/obrigado.html?${params.toString()}`);
 });
-  document.getElementById("year").textContent = new Date().getFullYear();
+
 </script>
 </body>
 </html>

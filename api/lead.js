@@ -130,9 +130,46 @@ function buildCustomFieldsValues(pairs) {
   return out;
 }
 
-async function createContact({ nome, telefone, email }, { baseUrl, token }, fieldIds) {
-  // Contato sempre tem "name". Para telefone, usa fallback seguro com field_code PHONE se o field_id não existir em Contacts.
-  const customPairs = [];
+async function createContact({ nome, telefone }, { baseUrl, token }) {
+  const TAG = "Landing Grupo VIP";
+  const phoneValue = telefone ? String(telefone) : "";
+
+  const body = [
+    {
+      name: nome,
+
+      _embedded: {
+        tags: [{ name: TAG }],
+      },
+
+      ...(phoneValue
+        ? {
+            custom_fields_values: [
+              {
+                field_id: 1024825, // Telefone
+                values: [
+                  {
+                    value: phoneValue,
+                    enum_code: "WORK",
+                  },
+                ],
+              },
+            ],
+          }
+        : {}),
+    },
+  ];
+
+  const json = await kommoFetch(`${baseUrl}/api/v4/contacts`, token, {
+    method: "POST",
+    body: JSON.stringify(body),
+  });
+
+  const contactId = json?._embedded?.contacts?.[0]?.id;
+  if (!contactId) throw new Error("Não consegui obter o ID do contato criado.");
+
+  return contactId;
+}
 
   // Se o ID 1024823 existir em contacts, preenche também (além do name padrão)
   if (fieldIds.contacts.has(1024823)) customPairs.push({ field_id: 1024823, value: nome });
@@ -188,18 +225,17 @@ async function createContact({ nome, telefone, email }, { baseUrl, token }, fiel
   if (!contactId) throw new Error("Não consegui obter o ID do contato criado.");
 
   return contactId;
-}
 
 async function createLead({ nome, telefone }, contactId, { baseUrl, token }, fieldIds) {
-  const leadObj = {
+ const leadObj = {
   name: `Lead Landing MRL - ${nome}`,
-  _embedded: { contacts: [{ id: contactId }] },
-
-  // TAGS no lead
-  tags_to_add: [
-    { name: "Landing Page" },
-    { name: "Grupo VIP" }
-  ],
+  _embedded: {
+    contacts: [{ id: contactId }],
+    tags: [
+      { name: "Landing Page" },
+      { name: "Grupo VIP" }
+    ],
+  },
 };
 
   // Se os IDs existirem em leads, preenche lá também

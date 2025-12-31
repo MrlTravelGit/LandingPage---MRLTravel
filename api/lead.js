@@ -1,4 +1,4 @@
-// api/lead.js
+// /api/lead.js
 // Vercel Serverless Function (Node)
 // ENV na Vercel:
 // - KOMMO_SUBDOMAIN = mrltravel
@@ -8,13 +8,18 @@ function onlyDigits(v = "") {
   return String(v).replace(/\D/g, "");
 }
 
-function normalizePhoneBRDigits(v = "") {
-  // Retorna sempre: 55 + DDD + número (até 13 dígitos)
+function normalizePhoneBR(v = "") {
+  // Retorna somente dígitos, sempre começando com 55 + DDD + número (12 ou 13 dígitos)
   const d = onlyDigits(v);
   if (!d) return "";
 
-  if (d.startsWith("55")) return d.slice(0, 13);
-  return ("55" + d).slice(0, 13);
+  if (d.startsWith("55")) {
+    const rest = d.slice(2).slice(0, 11);
+    return "55" + rest;
+  }
+
+  const local = d.slice(0, 11);
+  return "55" + local;
 }
 
 function safeTrim(v = "") {
@@ -82,91 +87,93 @@ async function kommoFetch(url, token, options = {}) {
   return json;
 }
 
-async function fetchCustomFieldIds(entity, { baseUrl, token }) {
-  // entity: "contacts" | "leads"
-  // Endpoint padrão Kommo v4: /api/v4/<entity>/custom_fields
-  const ids = new Set();
+async function getCustomFieldIds(baseUrl, token) {
+  const ids = { contacts: new Set(), leads: new Set() };
 
   try {
-    const json = await kommoFetch(`${baseUrl}/api/v4/${entity}/custom_fields`, token, {
-      method: "GET",
-    });
-    const arr = json?._embedded?.custom_fields || [];
-    arr.forEach((f) => ids.add(Number(f.id)));
-  } catch {
-    // Se falhar, só retorna Set vazio e seguimos com fallback por field_code
-  }
+    const c = await kommoFetch(`${baseUrl}/api/v4/contacts/custom_fields`, token, { method: "GET" });
+    const arr = c?._embedded?.custom_fields || [];
+    arr.forEach((f) => ids.contacts.add(Number(f.id)));
+  } catch {}
+
+  try {
+    const l = await kommoFetch(`${baseUrl}/api/v4/leads/custom_fields`, token, { method: "GET" });
+    const arr = l?._embedded?.custom_fields || [];
+    arr.forEach((f) => ids.leads.add(Number(f.id)));
+  } catch {}
 
   return ids;
 }
 
-function buildCustomFieldsValues(items) {
-  // items: [{ field_id? , field_code?, value, enum_code? }]
+function buildCustomFieldsValues(pairs) {
   const out = [];
+  for (const p of pairs) {
+    if (!p) continue;
 
-  for (const it of items) {
-    if (!it) continue;
-    const value = it.value;
+    // aceita field_id OU field_code
+    const hasFieldId = p.field_id !== undefined && p.field_id !== null;
+    const hasFieldCode = p.field_code !== undefined && p.field_code !== null;
 
+    if (!hasFieldId && !hasFieldCode) continue;
+
+    const value = p.value;
     if (value === undefined || value === null || String(value).trim() === "") continue;
 
-    if (it.field_id) {
-      out.push({
-        field_id: Number(it.field_id),
-        values: [
-          {
-            value: String(value),
-            ...(it.enum_code ? { enum_code: it.enum_code } : {}),
-          },
-        ],
-      });
-      continue;
-    }
+    const obj = {
+      values: [{ value: String(value) }],
+    };
 
-    if (it.field_code) {
-      out.push({
-        field_code: String(it.field_code),
-        values: [{ value: String(value) }],
-      });
-    }
+    if (hasFieldId) obj.field_id = Number(p.field_id);
+    if (hasFieldCode) obj.field_code = String(p.field_code);
+
+    out.push(obj);
   }
-
   return out;
 }
 
-async function createContact({ nome, telefone, email }, { baseUrl, token }, contactFieldIds) {
+async function patchEntityTags(entityType, entityId, tags, { baseUrl, token }) {
+  const clean = (tags || [])
+    .map((t) => safeTrim(t))
+    .filter(Boolean)
+    .map((name) => ({ name }));
+
+  if (!clean.length) return;
+
+  // PATCH https://{subdomain}.kommo.com/api/v4/{entity_type}/{id}
+  // body: { "_embedded": { "tags": [ { "name": "..." } ] } }
+  await kommoFetch(`${baseUrl}/api/v4/${entityType}/${entityId}`, token, {
+    method: "PATCH",
+    body: JSON.stringify({ _embedded: { tags: clean } }),
+  });
+}
+
+async function createContact({ nome, telefone, email }, { baseUrl, token }, fieldIds) {
   const pairs = [];
 
-  // Nome (custom field 1024823) se existir em Contacts
-  if (contactFieldIds.has(1024823)) {
+  // Nome no campo customizado 1024823 (se existir em contacts)
+  if (fieldIds?.contacts?.has(1024823)) {
     pairs.push({ field_id: 1024823, value: nome });
   }
 
-  // Telefone: tenta field_id 1024825, se não existir usa field_code PHONE
+  // Telefone: usa field_id 1024825 se existir, senão field_code PHONE
   if (telefone) {
-    if (contactFieldIds.has(1024825)) {
-      pairs.push({ field_id: 1024825, value: telefone, enum_code: "WORK" });
+    if (fieldIds?.contacts?.has(1024825)) {
+      pairs.push({ field_id: 1024825, value: telefone });
     } else {
       pairs.push({ field_code: "PHONE", value: telefone });
     }
   }
 
-  // Email: usa field_code EMAIL (normalmente existe)
-  if (email) {
-    pairs.push({ field_code: "EMAIL", value: email });
-  }
+  // Email (opcional)
+  if (email) pairs.push({ field_code: "EMAIL", value: email });
 
-  const contactObj = {
-    name: nome,
-    tags_to_add: [{ name: "Landing Grupo VIP" }],
-  };
-
-  const custom_fields_values = buildCustomFieldsValues(pairs);
-  if (custom_fields_values.length) contactObj.custom_fields_values = custom_fields_values;
+  const bodyContact = { name: nome };
+  const custom = buildCustomFieldsValues(pairs);
+  if (custom.length) bodyContact.custom_fields_values = custom;
 
   const json = await kommoFetch(`${baseUrl}/api/v4/contacts`, token, {
     method: "POST",
-    body: JSON.stringify([contactObj]),
+    body: JSON.stringify([bodyContact]),
   });
 
   const contactId = json?._embedded?.contacts?.[0]?.id;
@@ -175,33 +182,21 @@ async function createContact({ nome, telefone, email }, { baseUrl, token }, cont
   return contactId;
 }
 
-async function createLead({ nome, telefone }, contactId, { baseUrl, token }, leadFieldIds) {
+async function createLead({ nome, telefone }, contactId, { baseUrl, token }, fieldIds) {
   const leadObj = {
     name: `Lead Landing MRL - ${nome}`,
     _embedded: {
       contacts: [{ id: contactId }],
     },
-    tags_to_add: [{ name: "Landing Page" }, { name: "Grupo VIP" }],
   };
 
-  // Se quiser preencher custom fields no Lead também
-  const pairs = [];
+  // Se esses campos existirem em leads, preenche também
+  const leadPairs = [];
+  if (fieldIds?.leads?.has(1024823)) leadPairs.push({ field_id: 1024823, value: nome });
+  if (telefone && fieldIds?.leads?.has(1024825)) leadPairs.push({ field_id: 1024825, value: telefone });
 
-  if (leadFieldIds.has(1024823)) {
-    pairs.push({ field_id: 1024823, value: nome });
-  }
-
-  if (telefone) {
-    if (leadFieldIds.has(1024825)) {
-      pairs.push({ field_id: 1024825, value: telefone, enum_code: "WORK" });
-    } else {
-      // em lead, nem sempre existe field_code PHONE, então só coloca se quiser arriscar:
-      // pairs.push({ field_code: "PHONE", value: telefone });
-    }
-  }
-
-  const custom_fields_values = buildCustomFieldsValues(pairs);
-  if (custom_fields_values.length) leadObj.custom_fields_values = custom_fields_values;
+  const leadCustom = buildCustomFieldsValues(leadPairs);
+  if (leadCustom.length) leadObj.custom_fields_values = leadCustom;
 
   const json = await kommoFetch(`${baseUrl}/api/v4/leads`, token, {
     method: "POST",
@@ -214,16 +209,14 @@ async function createLead({ nome, telefone }, contactId, { baseUrl, token }, lea
   return leadId;
 }
 
-module.exports = async function handler(req, res) {
+export default async function handler(req, res) {
   try {
     res.setHeader("Access-Control-Allow-Origin", "*");
     res.setHeader("Access-Control-Allow-Methods", "POST, OPTIONS");
     res.setHeader("Access-Control-Allow-Headers", "Content-Type");
 
     if (req.method === "OPTIONS") return res.status(204).end();
-    if (req.method !== "POST") {
-      return res.status(405).json({ ok: false, error: "Use POST." });
-    }
+    if (req.method !== "POST") return res.status(405).json({ ok: false, error: "Use POST." });
 
     const baseUrl = getKommoBaseUrl();
     const token = getKommoToken();
@@ -231,34 +224,19 @@ module.exports = async function handler(req, res) {
     const body = await readJson(req);
 
     const nome = safeTrim(body.nome);
-    const telefone = normalizePhoneBRDigits(body.telefone || body.whatsapp || "");
+    const telefone = normalizePhoneBR(body.telefone || body.whatsapp || "");
     const email = safeTrim(body.email || "");
 
-    if (!nome || nome.length < 2) {
-      return res.status(400).json({ ok: false, error: "Informe um nome válido." });
-    }
+    if (!nome || nome.length < 2) return res.status(400).json({ ok: false, error: "Informe um nome válido." });
+    if (telefone && telefone.length < 12) return res.status(400).json({ ok: false, error: "Telefone/WhatsApp inválido." });
 
-    if (telefone && telefone.length < 12) {
-      return res.status(400).json({ ok: false, error: "Telefone/WhatsApp inválido." });
-    }
+    const fieldIds = await getCustomFieldIds(baseUrl, token);
 
-    const [contactFieldIds, leadFieldIds] = await Promise.all([
-      fetchCustomFieldIds("contacts", { baseUrl, token }),
-      fetchCustomFieldIds("leads", { baseUrl, token }),
-    ]);
+    const contactId = await createContact({ nome, telefone, email }, { baseUrl, token }, fieldIds);
+    const leadId = await createLead({ nome, telefone }, contactId, { baseUrl, token }, fieldIds);
 
-    const contactId = await createContact(
-      { nome, telefone, email },
-      { baseUrl, token },
-      contactFieldIds
-    );
-
-    const leadId = await createLead(
-      { nome, telefone },
-      contactId,
-      { baseUrl, token },
-      leadFieldIds
-    );
+    // Tags no Lead (após criar)
+    await patchEntityTags("leads", leadId, ["Landing Page", "Grupo VIP"], { baseUrl, token });
 
     return res.status(200).json({ ok: true, contactId, leadId });
   } catch (err) {
@@ -269,4 +247,4 @@ module.exports = async function handler(req, res) {
       details: err.payload || null,
     });
   }
-};
+}

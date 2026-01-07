@@ -7,29 +7,28 @@
   <meta name="description" content="Receba alertas diários de passagens e pacotes com ofertas e suporte da MRL Travel." />
   <meta name="theme-color" content="#0b1f3b" />
 
-<!-- Meta Pixel Code -->
-<script>
-  !function(f,b,e,v,n,t,s)
-  {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
-  n.callMethod.apply(n,arguments):n.queue.push(arguments)};
-  if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
-  n.queue=[];t=b.createElement(e);t.async=!0;
-  t.src=v;s=b.getElementsByTagName(e)[0];
-  s.parentNode.insertBefore(t,s)}(window, document,'script',
-  'https://connect.facebook.net/en_US/fbevents.js');
+  <!-- Meta Pixel Code -->
+  <script>
+    !function(f,b,e,v,n,t,s)
+    {if(f.fbq)return;n=f.fbq=function(){n.callMethod?
+    n.callMethod.apply(n,arguments):n.queue.push(arguments)};
+    if(!f._fbq)f._fbq=n;n.push=n;n.loaded=!0;n.version='2.0';
+    n.queue=[];t=b.createElement(e);t.async=!0;
+    t.src=v;s=b.getElementsByTagName(e)[0];
+    s.parentNode.insertBefore(t,s)}(window, document,'script',
+    'https://connect.facebook.net/en_US/fbevents.js');
 
-  fbq('init', '844443244374625');
-  fbq('track', 'PageView');
-</script>
-<noscript>
-  <img height="1" width="1" style="display:none"
-  src="https://www.facebook.com/tr?id=844443244374625&ev=PageView&noscript=1"/>
-</noscript>
-<!-- End Meta Pixel Code -->
+    fbq('init', '844443244374625');
+    fbq('track', 'PageView');
+  </script>
+  <noscript>
+    <img height="1" width="1" style="display:none"
+      src="https://www.facebook.com/tr?id=844443244374625&ev=PageView&noscript=1"/>
+  </noscript>
+  <!-- End Meta Pixel Code -->
 
   <style>
     :root{
-      /* Cores da MRL Travel */
       --blue-900:#060a13;
       --blue-800:#0b1f3b;
       --blue-700:#123a74;
@@ -42,13 +41,9 @@
       --border:rgba(255,255,255,.12);
       --shadow: 0 18px 60px rgba(0,0,0,.45);
 
-      /* Imagem principal */
       --hero: url("./img/asa-aviao.png");
 
-      /* espaçamento lateral */
       --pad: 56px;
-
-      /* largura de leitura */
       --contentMax: 1100px;
     }
 
@@ -70,7 +65,6 @@
     @media (max-width: 900px){ :root{ --pad: 28px; } }
     @media (max-width: 520px){ :root{ --pad: 18px; } }
 
-    /* Fundo global */
     .bg{
       position:fixed; inset:0; z-index:-3;
       background-image: var(--hero);
@@ -87,7 +81,6 @@
         linear-gradient(180deg, rgba(6,10,19,.78), rgba(6,10,19,.92));
     }
 
-    /* Topbar */
     .topbar{
       position:sticky; top:0; z-index:50;
       backdrop-filter: blur(10px);
@@ -124,7 +117,6 @@
       text-overflow:ellipsis;
     }
 
-    /* Botões */
     .btn{
       display:inline-flex; align-items:center; justify-content:center;
       padding:10px 14px;
@@ -166,7 +158,6 @@
     }
     .sectionLight .p{ color: rgba(10,15,30,.78); }
 
-    /* HERO */
     .heroFull{
       position:relative;
       width:100%;
@@ -234,7 +225,6 @@
       justify-content:flex-start;
     }
 
-    /* ABOUT */
     .aboutGrid{
       display:grid;
       grid-template-columns: 1.15fr .85fr;
@@ -252,7 +242,6 @@
     }
     .aboutPhoto img{ width:100%; height:auto; display:block; }
 
-    /* DEPOIMENTOS (estilo referência: cards claros e setas) */
     .reviewsWrap{ padding: 70px 0; }
     .reviewsHeader{
       display:flex;
@@ -421,7 +410,6 @@
     }
     .reviewsMeta b{ color: rgba(185,133,42,.98); }
 
-    /* BENEFÍCIOS */
     .benefits{ padding: 74px 0; }
     .benefitsTitle{
       font-size: 40px;
@@ -454,7 +442,6 @@
     .benefitCard h3{ margin: 0; font-size: 16px; font-weight:1100; }
     .benefitCard p{ margin: 10px 0 0; color: var(--muted); font-weight:900; line-height:1.55; }
 
-    /* FORM (mais intuitivo, sem foto) */
     .formSection{ padding: 72px 0 60px; }
     .formGrid{
       display:grid;
@@ -523,7 +510,6 @@
       display:flex; gap:10px; flex-wrap:wrap;
     }
 
-    /* FOOTER */
     .footer{
       padding: 58px 0 22px;
       border-top: 1px solid rgba(255,255,255,.10);
@@ -619,7 +605,7 @@
         <div class="brandName">MRL Travel</div>
       </a>
 
-      <a class="btn btnGold" href="#grupo">Entrar no grupo</a>
+      <a class="btn btnGold" href="#grupo" id="ctaTopo">Entrar no grupo</a>
     </div>
   </header>
 
@@ -644,7 +630,7 @@
             </p>
 
             <div class="ctaRow">
-              <a class="btn btnGold" href="#grupo">Quero receber alertas</a>
+              <a class="btn btnGold" href="#grupo" id="ctaHero">Quero receber alertas</a>
               <a class="btn" href="#provas">Ver depoimentos</a>
             </div>
           </div>
@@ -673,271 +659,13 @@
               </p>
 
               <div class="ctaRow" style="justify-content:flex-start; margin-top:16px;">
-                <a class="btn btnGold" href="#grupo">Quero entrar no grupo</a>
+                <a class="btn btnGold" href="#grupo" id="ctaQuem">Quero entrar no grupo</a>
               </div>
             </div>
 
             <div class="aboutPhoto">
               <img src="./img/michael.jpg" alt="Michael Bragança, MRL Travel">
             </div>
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- DEPOIMENTOS (estilo referência, com prints) -->
-    <section class="sectionLight" id="provas">
-      <div class="wrap reviewsWrap">
-        <div class="contentMax">
-          <div class="reviewsHeader">
-            <div>
-              <div class="sectionTitle">Depoimentos</div>
-              <p class="reviewsSub">Confira a opinião de nossos clientes.</p>
-            </div>
-          </div>
-
-          <div class="carouselLight" id="reviewsCarousel">
-            <div class="track" id="reviewsTrack" aria-label="Carrossel de avaliações">
-
-              <!--
-                Coloque seus prints na pasta /img com estes nomes (ou altere o src):
-                ./img/review-leidiane.png
-                ./img/review-jocilda.png
-                ./img/review-dulcy.png
-                ./img/review-rejiane.png
-                ./img/review-carolina.png
-                ./img/review-priscila.png
-              -->
-
-              <!-- PÁGINA 1 (3 cards) -->
-              <div class="slide">
-                <div class="reviewsGrid">
-
-                  <article class="reviewCard">
-                    <div class="reviewTop">
-                      <div class="avatar" aria-hidden="true">L</div>
-                      <div>
-                        <p class="reviewName">Leidiane Roberta</p>
-                        <div class="stars">★★★★★</div>
-                      </div>
-                    </div>
-
-                    <p class="reviewBody">
-                      Minha experiência com a MRL Travel foi simplesmente incrível do início ao fim. Viagem de lua de mel para Porto de Galinhas, tudo saiu ainda melhor do que sonhamos.
-                    </p>
-
-                    <div class="badgeGoogleLight" aria-label="Fonte Google">
-                      <span>Google</span>
-                      <span style="opacity:.75;">Avaliação real</span>
-                    </div>
-
-                    <div class="printBox">
-                      <img src="./img/review-leidiane.png" alt="Print de avaliação do Google: Leidiane Roberta">
-                    </div>
-                  </article>
-
-                  <article class="reviewCard">
-                    <div class="reviewTop">
-                      <div class="avatar" aria-hidden="true">J</div>
-                      <div>
-                        <p class="reviewName">Jocilda Carvalho de Faria</p>
-                        <div class="stars">★★★★★</div>
-                      </div>
-                    </div>
-
-                    <p class="reviewBody">
-                      Viajei na MRL Travel e deu tudo certo. Atendimento ótimo do início ao fim. O Michael foi educado, prestativo e sempre disposto a ajudar. Amei e recomendo.
-                    </p>
-
-                    <div class="badgeGoogleLight" aria-label="Fonte Google">
-                      <span>Google</span>
-                      <span style="opacity:.75;">Avaliação real</span>
-                    </div>
-
-                    <div class="printBox">
-                      <img src="./img/review-jocilda.png" alt="Print de avaliação do Google: Jocilda Carvalho de Faria">
-                    </div>
-                  </article>
-
-                  <article class="reviewCard">
-                    <div class="reviewTop">
-                      <div class="avatar" aria-hidden="true">D</div>
-                      <div>
-                        <p class="reviewName">Dulcy Tavares</p>
-                        <div class="stars">★★★★★</div>
-                      </div>
-                    </div>
-
-                    <p class="reviewBody">
-                      Foi maravilhoso. Desde a saída, a estadia e os passeios, a MRL Travel nos proporcionou uma viagem sem preocupações. Foi ótimo viajar com vocês.
-                    </p>
-
-                    <div class="badgeGoogleLight" aria-label="Fonte Google">
-                      <span>Google</span>
-                      <span style="opacity:.75;">Avaliação real</span>
-                    </div>
-
-                    <div class="printBox">
-                      <img src="./img/review-dulcy.png" alt="Print de avaliação do Google: Dulcy Tavares">
-                    </div>
-                  </article>
-
-                </div>
-              </div>
-
-              <!-- PÁGINA 2 (3 cards) -->
-              <div class="slide">
-                <div class="reviewsGrid">
-
-                  <article class="reviewCard">
-                    <div class="reviewTop">
-                      <div class="avatar" aria-hidden="true">R</div>
-                      <div>
-                        <p class="reviewName">Rejiane Lima</p>
-                        <div class="stars">★★★★★</div>
-                      </div>
-                    </div>
-
-                    <p class="reviewBody">
-                      Ótimo atendimento e assessoria. Atendimento rápido para escolha de voos e hotel, viajar com minha pequena foi tranquilo. Organização excelente, nota 10.
-                    </p>
-
-                    <div class="badgeGoogleLight" aria-label="Fonte Google">
-                      <span>Google</span>
-                      <span style="opacity:.75;">Avaliação real</span>
-                    </div>
-
-                    <div class="printBox">
-                      <img src="./img/review-rejiane.png" alt="Print de avaliação do Google: Rejiane Lima">
-                    </div>
-                  </article>
-
-                  <article class="reviewCard">
-                    <div class="reviewTop">
-                      <div class="avatar" aria-hidden="true">C</div>
-                      <div>
-                        <p class="reviewName">Carolina Lacerda</p>
-                        <div class="stars">★★★★★</div>
-                      </div>
-                    </div>
-
-                    <p class="reviewBody">
-                      Viajamos em família e deu tudo certo. Fomos muito bem recepcionados. O Michael foi muito atencioso. Só chegamos no aeroporto e fomos direto ao embarque.
-                    </p>
-
-                    <div class="badgeGoogleLight" aria-label="Fonte Google">
-                      <span>Google</span>
-                      <span style="opacity:.75;">Avaliação real</span>
-                    </div>
-
-                    <div class="printBox">
-                      <img src="./img/review-carolina.png" alt="Print de avaliação do Google: Carolina Lacerda">
-                    </div>
-                  </article>
-
-                  <article class="reviewCard">
-                    <div class="reviewTop">
-                      <div class="avatar" aria-hidden="true">P</div>
-                      <div>
-                        <p class="reviewName">Priscila Modesto Alves</p>
-                        <div class="stars">★★★★★</div>
-                      </div>
-                    </div>
-
-                    <p class="reviewBody">
-                      Viagem para Gramado totalmente organizada pela MRL Travel, foi perfeita. Assistência completa e sem problemas. Já fechei a próxima viagem com eles.
-                    </p>
-
-                    <div class="badgeGoogleLight" aria-label="Fonte Google">
-                      <span>Google</span>
-                      <span style="opacity:.75;">Avaliação real</span>
-                    </div>
-
-                    <div class="printBox">
-                      <img src="./img/review-priscila.png" alt="Print de avaliação do Google: Priscila Modesto Alves">
-                    </div>
-                  </article>
-
-                </div>
-              </div>
-
-            </div>
-
-            <div class="navBtn navPrev" id="revPrev" aria-label="Anterior">‹</div>
-            <div class="navBtn navNext" id="revNext" aria-label="Próximo">›</div>
-          </div>
-
-          <div class="dots" id="reviewsDots" aria-label="Indicadores do carrossel"></div>
-
-          <div class="reviewsMeta">
-            Avaliação <b>5,0</b> no Google, com base em <b>79 avaliações</b>.
-          </div>
-        </div>
-      </div>
-    </section>
-
-    <!-- BENEFÍCIOS DO GRUPO VIP -->
-    <section class="sectionDark" id="beneficios">
-      <div class="wrap benefits">
-        <div class="contentMax">
-          <div class="benefitsTitle">Benefícios do Grupo VIP</div>
-          <p class="p">
-            Um canal direto para quem quer viajar mais, pagando menos, com suporte de verdade em cada etapa.
-          </p>
-
-          <div class="benefitsGrid">
-            <div class="benefitCard">
-              <div class="benefitTop">
-                <div class="benefitIco" aria-hidden="true">⚡</div>
-                <h3>Ofertas em primeira mão</h3>
-              </div>
-              <p>Você recebe oportunidades assim que aparecem, para aproveitar antes de subir ou acabar.</p>
-            </div>
-
-            <div class="benefitCard">
-              <div class="benefitTop">
-                <div class="benefitIco" aria-hidden="true">🔔</div>
-                <h3>Alertas de preço</h3>
-              </div>
-              <p>Quando surgir um bom valor (ou uma queda), você fica sabendo e decide rápido.</p>
-            </div>
-
-            <div class="benefitCard">
-              <div class="benefitTop">
-                <div class="benefitIco" aria-hidden="true">🎯</div>
-                <h3>Indicações selecionadas</h3>
-              </div>
-              <p>Curadoria com foco em custo-benefício, conforto e opções que realmente fazem sentido.</p>
-            </div>
-
-            <div class="benefitCard">
-              <div class="benefitTop">
-                <div class="benefitIco" aria-hidden="true">🤝</div>
-                <h3>Atendimento humanizado</h3>
-              </div>
-              <p>Orientação clara, comunicação direta e transparência do começo ao fim.</p>
-            </div>
-
-            <div class="benefitCard">
-              <div class="benefitTop">
-                <div class="benefitIco" aria-hidden="true">🧭</div>
-                <h3>Dicas práticas e suporte</h3>
-              </div>
-              <p>Check-in, bagagem, documentos, melhores horários e o que ajuda sua viagem a fluir.</p>
-            </div>
-
-            <div class="benefitCard">
-              <div class="benefitTop">
-                <div class="benefitIco" aria-hidden="true">🛟</div>
-                <h3>Assistência quando precisar</h3>
-              </div>
-              <p>Suporte em imprevistos e remarcações, para você viajar com mais tranquilidade.</p>
-            </div>
-          </div>
-
-          <div class="ctaRow" style="margin-top:18px;">
-            <a class="btn btnGold" href="#grupo">Quero receber as promoções</a>
-            <a class="btn" href="#provas">Ver depoimentos</a>
           </div>
         </div>
       </div>
@@ -955,16 +683,6 @@
               <p class="p" style="max-width:none;">
                 Preencha o formulário ao lado e, após enviar, você será redirecionado para a página de obrigado e, em seguida, para o link do nosso grupo VIP.
               </p>
-
-              <ul class="list" aria-label="O que você vai receber">
-                <li class="li"><span class="dotGold" aria-hidden="true"></span><span>Alertas diários de passagens e pacotes com ótimo custo-benefício.</span></li>
-                <li class="li"><span class="dotGold" aria-hidden="true"></span><span>Ofertas relâmpago (quando aparecem, podem acabar rápido).</span></li>
-                <li class="li"><span class="dotGold" aria-hidden="true"></span><span>Dicas práticas para viajar melhor, com mais economia e menos dor de cabeça.</span></li>
-              </ul>
-
-              <div class="ctaRow" style="justify-content:flex-start;">
-                <a class="btn" href="#provas">Ver avaliações</a>
-              </div>
             </div>
 
             <div class="card">
@@ -977,13 +695,11 @@
 
                 <label for="email">Email (opcional)</label>
                 <input id="email" name="email" type="email" placeholder="seuemail@dominio.com" />
-<div class="actions">
-  <button class="btn btnGold" type="submit" id="enviar">
-    Entrar no grupo
-  </button>
-  <button class="btn" type="button" id="limpar">Limpar</button>
-</div>
 
+                <div class="actions">
+                  <button class="btn btnGold" type="submit" id="enviar">Entrar no grupo</button>
+                  <button class="btn" type="button" id="limpar">Limpar</button>
+                </div>
               </form>
             </div>
           </div>
@@ -1046,95 +762,101 @@
     </div>
   </footer>
 
- <script>
-  const GROUP_LINK = "https://chat.whatsapp.com/KZ1hgGkZMog5JsdCWHSr96";
+  <script>
+    const GROUP_LINK = "https://chat.whatsapp.com/KZ1hgGkZMog5JsdCWHSr96";
 
-  function formatPhoneBR(v){
-    const d = v.replace(/\D/g, "").slice(0, 11);
-    if (d.length <= 2) return d;
-    if (d.length <= 7) return `(${d.slice(0,2)}) ${d.slice(2)}`;
-    return `(${d.slice(0,2)}) ${d.slice(2,7)} ${d.slice(7)}`;
-  }
-
-  const form = document.getElementById("vipForm");
-  const nome = document.getElementById("nome");
-  const whatsapp = document.getElementById("whatsapp");
-  const email = document.getElementById("email");
-  const btnLimpar = document.getElementById("limpar");
-  const btnSubmit = document.getElementById("enviar");
-
-  whatsapp.addEventListener("input", (e) => {
-    e.target.value = formatPhoneBR(e.target.value);
-  });
-
-  btnLimpar.addEventListener("click", () => {
-    form.reset();
-    nome.focus();
-  });
-
-  async function sendLeadToApi({ nome, whatsapp, email }) {
-    const res = await fetch("/api/lead", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify({
-        nome,
-        whatsapp,
-        email,
-        origem: "Landing Grupo VIP",
-        page: window.location.href
-      })
-    });
-
-    if (!res.ok) {
-      const txt = await res.text().catch(() => "");
-      throw new Error(txt || "Falha ao enviar lead");
+    function safeFbqTrack(eventName){
+      try{
+        if (typeof window.fbq === "function") {
+          window.fbq("track", eventName);
+        }
+      }catch(e){}
     }
 
-    return res.json().catch(() => ({}));
-  }
+    function formatPhoneBR(v){
+      const d = v.replace(/\D/g, "").slice(0, 11);
+      if (d.length <= 2) return d;
+      if (d.length <= 7) return `(${d.slice(0,2)}) ${d.slice(2)}`;
+      return `(${d.slice(0,2)}) ${d.slice(2,7)} ${d.slice(7)}`;
+    }
 
-form.addEventListener("submit", async (e) => {
-  e.preventDefault();
+    const form = document.getElementById("vipForm");
+    const nome = document.getElementById("nome");
+    const whatsapp = document.getElementById("whatsapp");
+    const email = document.getElementById("email");
+    const btnLimpar = document.getElementById("limpar");
+    const btnSubmit = document.getElementById("enviar");
 
-  if (window.fbq) {
-    fbq("track", "Lead");
-  }
+    whatsapp.addEventListener("input", (e) => {
+      e.target.value = formatPhoneBR(e.target.value);
+    });
 
-  const n = nome.value.trim();
-  const w = whatsapp.value.replace(/\D/g, "");
-  const em = email.value.trim();
+    btnLimpar.addEventListener("click", () => {
+      form.reset();
+      nome.focus();
+    });
 
+    async function sendLeadToApi({ nome, whatsapp, email }) {
+      const res = await fetch("/api/lead", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          nome,
+          whatsapp,
+          email,
+          origem: "Landing Grupo VIP",
+          page: window.location.href
+        })
+      });
 
-  if (n.length < 2) { alert("Informe seu nome."); nome.focus(); return; }
-  if (w.length < 10) { alert("Informe um WhatsApp válido."); whatsapp.focus(); return; }
+      if (!res.ok) {
+        const txt = await res.text().catch(() => "");
+        throw new Error(txt || "Falha ao enviar lead");
+      }
 
-  btnSubmit.disabled = true;
-  btnSubmit.textContent = "Enviando...";
+      return res.json().catch(() => ({}));
+    }
 
-  let saved = 0;
+    form.addEventListener("submit", async (e) => {
+      e.preventDefault();
 
-  try {
-    await sendLeadToApi({ nome: n, whatsapp: w, email: em });
-    saved = 1;
-  } catch (err) {
-    console.error(err);
-    alert("Não consegui salvar seu cadastro agora. Você ainda pode entrar no grupo e nós te ajudamos por lá.");
-  } finally {
-    btnSubmit.disabled = false;
-    btnSubmit.textContent = "Entrar no grupo";
-  }
+      const n = nome.value.trim();
+      const w = whatsapp.value.replace(/\D/g, "");
+      const em = email.value.trim();
 
-  const params = new URLSearchParams({
-    nome: n,
-    whatsapp: w,
-    email: em,
-    saved: String(saved),
-    next: GROUP_LINK
-  });
+      if (n.length < 2) { alert("Informe seu nome."); nome.focus(); return; }
+      if (w.length < 10) { alert("Informe um WhatsApp válido."); whatsapp.focus(); return; }
 
-  window.location.assign(`/obrigado.html?${params.toString()}`);
-});
+      safeFbqTrack("Lead");
 
-</script>
+      btnSubmit.disabled = true;
+      btnSubmit.textContent = "Enviando...";
+
+      let saved = 0;
+
+      try {
+        await sendLeadToApi({ nome: n, whatsapp: w, email: em });
+        saved = 1;
+      } catch (err) {
+        console.error(err);
+        alert("Não consegui salvar seu cadastro agora. Você ainda pode entrar no grupo e nós te ajudamos por lá.");
+      } finally {
+        btnSubmit.disabled = false;
+        btnSubmit.textContent = "Entrar no grupo";
+      }
+
+      const params = new URLSearchParams({
+        nome: n,
+        whatsapp: w,
+        email: em,
+        saved: String(saved),
+        next: GROUP_LINK
+      });
+
+      window.location.assign(`/obrigado.html?${params.toString()}`);
+    });
+
+    document.getElementById("year").textContent = String(new Date().getFullYear());
+  </script>
 </body>
 </html>

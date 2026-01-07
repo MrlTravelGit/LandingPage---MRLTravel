@@ -977,17 +977,13 @@
 
                 <label for="email">Email (opcional)</label>
                 <input id="email" name="email" type="email" placeholder="seuemail@dominio.com" />
+<div class="actions">
+  <button class="btn btnGold" type="submit" id="enviar">
+    Entrar no grupo
+  </button>
+  <button class="btn" type="button" id="limpar">Limpar</button>
+</div>
 
-                <div class="actions">
-                  <button
-                    class="btn btnGold"
-                    type="button"
-                    onclick="if(window.fbq){fbq('track','Lead');} window.location.href='COLE_AQUI_O_LINK_DO_GRUPO';"
-                      >
-                        Entrar no grupo
-                      </button>
-                  <button class="btn" type="button" id="limpar">Limpar</button>
-                </div>
               </form>
             </div>
           </div>
@@ -1065,7 +1061,7 @@
   const whatsapp = document.getElementById("whatsapp");
   const email = document.getElementById("email");
   const btnLimpar = document.getElementById("limpar");
-  const btnSubmit = form.querySelector('button[type="submit"]');
+  const btnSubmit = document.getElementById("enviar");
 
   whatsapp.addEventListener("input", (e) => {
     e.target.value = formatPhoneBR(e.target.value);
@@ -1100,9 +1096,14 @@
 form.addEventListener("submit", async (e) => {
   e.preventDefault();
 
+  if (window.fbq) {
+    fbq("track", "Lead");
+  }
+
   const n = nome.value.trim();
   const w = whatsapp.value.replace(/\D/g, "");
   const em = email.value.trim();
+
 
   if (n.length < 2) { alert("Informe seu nome."); nome.focus(); return; }
   if (w.length < 10) { alert("Informe um WhatsApp válido."); whatsapp.focus(); return; }

@@ -979,7 +979,13 @@
                 <input id="email" name="email" type="email" placeholder="seuemail@dominio.com" />
 
                 <div class="actions">
-                  <button class="btn btnGold" type="submit">Entrar no grupo</button>
+                  <button
+                    class="btn btnGold"
+                    type="button"
+                    onclick="if(window.fbq){fbq('track','Lead');} window.location.href='COLE_AQUI_O_LINK_DO_GRUPO';"
+                      >
+                        Entrar no grupo
+                      </button>
                   <button class="btn" type="button" id="limpar">Limpar</button>
                 </div>
               </form>
